@@ -7,7 +7,6 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [captchaVerified, setCaptchaVerified] = useState(false);
-  const siteKey = "YOUR_SITE_KEY";
 
   const handleCaptchaChange = (value) => {
     console.log("CAPTCHA Value:", value);
@@ -81,7 +80,7 @@ const SignUp = () => {
 
                   <div class="grecaptcha-badge">
                   <ReCAPTCHA
-                  sitekey="6LeCHdwqAAAAAM_wlQpyMASYH2gajSULqi6qCv2u"
+                  sitekey="6LdIPdwqAAAAAD1gd2GBzNscfI6z2iGA2X5juaBt"
                   onChange={handleCaptchaChange}
                   />
                   </div>

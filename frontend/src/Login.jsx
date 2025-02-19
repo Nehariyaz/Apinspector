@@ -68,7 +68,7 @@ const Login = () => {
 
                   <div class="grecaptcha-badge">
                   <ReCAPTCHA
-                  sitekey="6LeCHdwqAAAAAM_wlQpyMASYH2gajSULqi6qCv2u"
+                  sitekey="6LdIPdwqAAAAAD1gd2GBzNscfI6z2iGA2X5juaBt"
                   onChange={handleCaptchaChange}
                   />
                   </div>
