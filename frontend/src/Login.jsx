@@ -2,19 +2,23 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom'; 
 import ReCAPTCHA from "react-google-recaptcha";
+import axios from 'axios';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [captchaToken, setCaptchaToken] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState("");
+  const[captchaVerified , setCaptchaVerified] = useState(false)
   const siteKey = "6Lcak9wqAAAAABuhNvb8rOd5PDqozXUwr3xmaiap";
 
   const handleCaptchaChange = (value) => {
     console.log("CAPTCHA Value:", value);
     if (value) {
+      setCaptchaToken(value); 
       setCaptchaVerified(true);
     } else {
+      setCaptchaToken(""); 
       setCaptchaVerified(false);
     }
   };
@@ -25,7 +29,8 @@ const handleSubmit = async (event) => {
   event.preventDefault();
 
   try {
-    const response = await axios.post("http://localhost:3000/auth/login", {
+    console.log(password)
+    const response = await axios.post("http://localhost:3000/api/login", {
       email,
       password,
       captchaToken,  // Send reCAPTCHA response if needed
@@ -35,61 +40,62 @@ const handleSubmit = async (event) => {
     alert(response.data.message); // Show success message
   } catch (error) {
     setErrorMessage(error.response?.data?.message || "Login failed!");
+    alert(error)
   }
 };
 
 
   return (
-    <div class="container-fluid app-container">
-    <div class="row align-items-stretch">
+    <div className="container-fluid app-container">
+    <div className="row align-items-stretch">
 
-        <div class="col-md-6 d-flex justify-content-center align-items-center ">
-            <div class="card">
-              <h2 class="text">Enter Your Credentials to access your account</h2>
+        <div className="col-md-6 d-flex justify-content-center align-items-center ">
+            <div className="card">
+              <h2 className="text">Enter Your Credentials to access your account</h2>
               <form onSubmit={handleSubmit}>
-                  <div class="mb-3">
-                    <label class="form-label">Email</label>
+                  <div className="mb-3">
+                    <label className="form-label">Email</label>
                     <input
                       type="email"
                       id="email"
-                      class="form-control"
+                      className="form-control"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
                     />
                   </div>
             
-                  <div class="mb-3">
-                    <label class="form-label">Password</label>
+                  <div className="mb-3">
+                    <label className="form-label">Password</label>
                     <input
                       type="password"
                       id="password"
-                      class="form-control"
+                      className="form-control"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
                     />
                   </div>
 
-                  <div class="grecaptcha-badge">
+                  <div className="grecaptcha-badge">
                   <ReCAPTCHA
                   sitekey= "6Lcak9wqAAAAABuhNvb8rOd5PDqozXUwr3xmaiap"
                   onChange={handleCaptchaChange}
                   />
                   </div>
 
-                  {errorMessage && <p class="text-danger text-center">{errorMessage}</p>}
+                  {errorMessage && <p className="text-danger text-center">{errorMessage}</p>}
                 
-                  <button class="custom-btn" disabled={!captchaVerified}>Login</button>
+                  <button className="custom-btn" disabled={!captchaVerified}>Login</button>
               </form>
 
-              <div class="d-flex justify-content-between mt-3">
-                <Link to="/forgot-password" class="text-decoration-none text-primary">
+              <div className="d-flex justify-content-between mt-3">
+                <Link to="/forgot-password" className="text-decoration-none text-primary">
                   Forgot Password?
                 </Link>
-                <div class="mb-3">
-                <label class="form-label" >Don't have an Account? </label>
-                <Link to="/signup" class="text-decoration-none text-primary">
+                <div className="mb-3">
+                <label className="form-label" >Don't have an Account? </label>
+                <Link to="/signup" className="text-decoration-none text-primary">
                   Sign Up
                 </Link>
                 </div>
@@ -98,10 +104,10 @@ const handleSubmit = async (event) => {
           </div>
         
 
-          <div class="col-md-6 bg-section d-flex flex-column">
-            <img src="insurance.svg" alt="no image" class="img" />
-            <div class="card-body text-center">
-            <h3 class="mt-2">confirm  API's endpoints, methods, and integrations are functioning as expected.</h3>
+          <div className="col-md-6 bg-section d-flex flex-column">
+            <img src="insurance.svg" alt="no image" className="img" />
+            <div className="card-body text-center">
+            <h3 className="mt-2">confirm  API's endpoints, methods, and integrations are functioning as expected.</h3>
             </div>
           </div>
         
