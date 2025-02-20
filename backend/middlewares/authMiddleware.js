@@ -10,11 +10,11 @@ const authenticateToken = async (req, res, next) => {
     }
         
     try {
-        // Verify reCAPTCHA with Google API
+        
         const captchaVerifyURL = `https://www.google.com/recaptcha/api/siteverify`;
         const response = await axios.post(captchaVerifyURL, null, {
             params: {
-                secret: process.env.RECAPTCHA_SECRET_KEY, // Secret key from .env
+                secret: process.env.RECAPTCHA_SECRET_KEY, 
                 response: captchaToken,
             },
         });
@@ -23,7 +23,7 @@ const authenticateToken = async (req, res, next) => {
             return res.status(400).json({ message: "CAPTCHA validation failed" });
         }
 
-        // Proceed with token authentication
+
         if (!token) {
             return res.status(401).json({ message: "Access Denied: No Token" });
         }
@@ -44,23 +44,4 @@ const authenticateToken = async (req, res, next) => {
 
 module.exports = { authenticateToken };
 
-    // if (!token) {
-    //     if (req.headers["content-type"] === "application/json") {
-    //         return res.status(401).json({ message: "Access Denied" });
-    //     }
-    //     return res.redirect("/login");
-    // }
-
-    // jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    //     if (err) {
-    //         if (req.headers["content-type"] === "application/json") {
-    //             return res.status(403).json({ message: "Invalid Token" });
-    //         }
-    //         return res.redirect("/login");
-    //     }
-    //     req.user = user;
-    //     next();
-    // });
-//};
-
-//module.exports = { authenticateToken };
+   
