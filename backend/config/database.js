@@ -3,8 +3,8 @@ require("dotenv").config();
 
 const sequelize = new Sequelize({
     dialect: "sqlite",
-    storage: process.env.DB_NAME, // Use SQLite database file
-    logging: false, // Disable logging
+    storage: process.env.DB_NAME, 
+    logging: false, 
 });
 
 sequelize.authenticate()
