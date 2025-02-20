@@ -7,8 +7,8 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [captchaVerified, setCaptchaVerified] = useState(false);
-  const siteKey = "YOUR_SITE_KEY";
+  const [captchaToken, setCaptchaToken] = useState(false);
+  const siteKey = "6Lcak9wqAAAAABuhNvb8rOd5PDqozXUwr3xmaiap";
 
   const handleCaptchaChange = (value) => {
     console.log("CAPTCHA Value:", value);
@@ -19,20 +19,25 @@ const Login = () => {
     }
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
 
-    if (!email || !password) {
-      setErrorMessage('Please fill in both fields.');
-    } 
-    if (!captchaVerified) {
-      setErrorMessage("Please verify the CAPTCHA");
-    }
-    else {
-      setErrorMessage('');
-      console.log('Logging in with:', { email, password });
-    }
-  };
+
+const handleSubmit = async (event) => {
+  event.preventDefault();
+
+  try {
+    const response = await axios.post("http://localhost:3000/auth/login", {
+      email,
+      password,
+      captchaToken,  // Send reCAPTCHA response if needed
+    });
+
+    localStorage.setItem("token", response.data.token); // Store JWT token
+    alert(response.data.message); // Show success message
+  } catch (error) {
+    setErrorMessage(error.response?.data?.message || "Login failed!");
+  }
+};
+
 
   return (
     <div class="container-fluid app-container">
@@ -68,7 +73,7 @@ const Login = () => {
 
                   <div class="grecaptcha-badge">
                   <ReCAPTCHA
-                  sitekey="6LdIPdwqAAAAAD1gd2GBzNscfI6z2iGA2X5juaBt"
+                  sitekey= "6Lcak9wqAAAAABuhNvb8rOd5PDqozXUwr3xmaiap"
                   onChange={handleCaptchaChange}
                   />
                   </div>
