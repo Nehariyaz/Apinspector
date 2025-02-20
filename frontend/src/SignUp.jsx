@@ -1,6 +1,8 @@
 import ReCAPTCHA from "react-google-recaptcha";
 import React, { useState } from "react";
 import axios from "axios";
+// import { Navigate } from "react-router-dom";
+
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -35,24 +37,25 @@ const SignUp = () => {
     console.log("Sending request with:", { email, password, captchaToken });
 
     try {
-      const response = await fetch("http://localhost:3000/api/register", {  // Use full backend URL
+      const response = await fetch("http://localhost:3000/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password,captchaToken }),
+        body: JSON.stringify({ email, password, captchaToken }),
       });
-
-      console.log("Server Response:", response.data);
-
-      const data = await response.json();
-
+      
+      const data = await response.json(); 
+      
+      console.log("Server Response:", data); 
+      
       if (response.ok) {
         alert("Registration successful! Please log in.");
-        navigate("/login"); 
+        window.location.href = "/login"; 
       } else {
         setErrorMessage(data.message || "Registration failed.");
       }
     } catch (error) {
-      setErrorMessage("An error occurred. Please try again.");
+      setErrorMessage("An error occurred. Please try again.",error);
+      alert(error)
     }
   };
 
