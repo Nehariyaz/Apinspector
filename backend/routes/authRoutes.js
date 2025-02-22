@@ -1,0 +1,41 @@
+const axios= require("axios")
+const express = require("express");
+const { register, login, logout, dashboard } = require("../controllers/authController");
+const { authenticateToken } = require("../middlewares/authMiddleware");
+
+const router = express.Router();
+
+router.get("/login", (req, res) => res.render("login",{message:null}));
+router.get("/register", (req, res) => res.render("register"));
+router.post("/register", register);
+router.post("/login", login);
+router.get("/logout", logout);
+router.get("/dashboard", authenticateToken, dashboard);
+
+
+router.post("/api/register", async (req, res) => {
+    try {
+        console.log("Incoming request:", req.body); 
+
+        const { email, password, captchaToken } = req.body;
+        register(req,res)
+
+        if (!email || !password || !captchaToken) {
+            console.log("Missing required fields.");
+            return res.status(400).json({ message: "Missing required fields." });
+        }
+    } catch (error) {
+        console.error("Register API Error:", error);
+        res.status(500).json({ message: "Server error during registration" });
+    }
+});
+
+
+router.post("/api/login", (req, res) => {
+    login(req, res);
+});
+
+router.post("/api/logout", logout);
+
+
+module.exports = router;
