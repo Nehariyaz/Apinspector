@@ -33,11 +33,11 @@ const handleSubmit = async (event) => {
     const response = await axios.post("http://localhost:3000/api/login", {
       email,
       password,
-      captchaToken,  // Send reCAPTCHA response if needed
+      captchaToken, 
     });
 
-    localStorage.setItem("token", response.data.token); // Store JWT token
-    alert(response.data.message); // Show success message
+    localStorage.setItem("token", response.data.token); 
+    alert(response.data.message); 
   } catch (error) {
     setErrorMessage(error.response?.data?.message || "Login failed!");
     alert(error)
@@ -47,7 +47,7 @@ const handleSubmit = async (event) => {
 
   return (
     <div className="container-fluid app-container">
-    <div className="row align-items-stretch">
+    <div className="row align-items-stretch g-0">
 
         <div className="col-md-6 d-flex justify-content-center align-items-center ">
             <div className="card">
@@ -90,12 +90,12 @@ const handleSubmit = async (event) => {
               </form>
 
               <div className="d-flex justify-content-between mt-3">
-                <Link to="/forgot-password" className="text-decoration-none text-primary">
+                <Link to="/forgot-password" className="text1">
                   Forgot Password?
                 </Link>
                 <div className="mb-3">
                 <label className="form-label" >Don't have an Account? </label>
-                <Link to="/signup" className="text-decoration-none text-primary">
+                <Link to="/signup" className="text1">
                   Sign Up
                 </Link>
                 </div>
@@ -107,7 +107,8 @@ const handleSubmit = async (event) => {
           <div className="col-md-6 bg-section d-flex flex-column">
             <img src="insurance.svg" alt="no image" className="img" />
             <div className="card-body text-center">
-            <h3 className="mt-2">confirm  API's endpoints, methods, and integrations are functioning as expected.</h3>
+            <h4 className="m-2">
+              Confirm API endpoints, methods and integrations are functioning as expected.</h4>
             </div>
           </div>
         
