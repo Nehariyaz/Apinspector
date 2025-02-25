@@ -22,7 +22,7 @@ before_script:
 build-backend:
   stage: build
   script:
-    - docker build -t $DOCKER_IMAGE_BACKEND -f backend/Dockerfile backend/
+    - docker build --pull -t $DOCKER_IMAGE_BACKEND -f backend/Dockerfile backend/
     - docker push $DOCKER_IMAGE_BACKEND
   only:
     - main
@@ -30,7 +30,7 @@ build-backend:
 build-frontend:
   stage: build
   script:
-    - docker build -t $DOCKER_IMAGE_FRONTEND -f frontend/Dockerfile frontend/
+    - docker build --pull -t $DOCKER_IMAGE_FRONTEND -f frontend/Dockerfile frontend/
     - docker push $DOCKER_IMAGE_FRONTEND
   only:
     - main
@@ -55,9 +55,13 @@ test-frontend:
 deploy:
   stage: deploy
   script:
-    - ssh user@server "docker pull $DOCKER_IMAGE_BACKEND && docker pull $DOCKER_IMAGE_FRONTEND"
-    - ssh user@server "docker stop backend || true && docker stop frontend || true"
-    - ssh user@server "docker run -d --env-file backend/.env --network host --name backend $DOCKER_IMAGE_BACKEND"
-    - ssh user@server "docker run -d -p 3000:3000 --name frontend $DOCKER_IMAGE_FRONTEND"
+    - ssh $SSH_USER@$SSH_HOST << 'EOF'
+      docker pull $DOCKER_IMAGE_BACKEND
+      docker pull $DOCKER_IMAGE_FRONTEND
+      docker stop backend || true && docker rm backend || true
+      docker stop frontend || true && docker rm frontend || true
+      docker run -d --env-file backend/.env --network host --name backend $DOCKER_IMAGE_BACKEND
+      docker run -d -p 3000:3000 --name frontend $DOCKER_IMAGE_FRONTEND
+      EOF
   only:
     - main
