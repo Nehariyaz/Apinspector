@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom'; 
 import ReCAPTCHA from "react-google-recaptcha";
 import axios from 'axios';
+import RightBg from "./RightBg.jsx";
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -104,13 +105,7 @@ const handleSubmit = async (event) => {
           </div>
         
 
-          <div className="col-md-6 bg-section d-flex flex-column">
-            <img src="insurance.svg" alt="no image" className="img" />
-            <div className="card-body text-center">
-            <h4 className="m-2">
-              Confirm API endpoints, methods and integrations are functioning as expected.</h4>
-            </div>
-          </div>
+          <RightBg />
         
 
       

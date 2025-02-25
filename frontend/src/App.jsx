@@ -8,7 +8,6 @@ import SignUp from './SignUp';
 import './App.css';
 
 
-
 function App() {
   return (
     <Router>

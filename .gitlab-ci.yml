@@ -1,0 +1,63 @@
+image: docker:latest
+
+services:
+  - docker:dind 
+  - postgres:15  
+
+variables:
+  DOCKER_IMAGE_BACKEND: "$CI_REGISTRY_IMAGE/backend:$CI_COMMIT_REF_SLUG"
+  DOCKER_IMAGE_FRONTEND: "$CI_REGISTRY_IMAGE/frontend:$CI_COMMIT_REF_SLUG"
+  POSTGRES_DB: "mydb"
+  POSTGRES_USER: "postgres"
+  POSTGRES_PASSWORD: "postgres"
+
+stages:
+  - build
+  - test
+  - deploy
+
+before_script:
+  - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+
+build-backend:
+  stage: build
+  script:
+    - docker build -t $DOCKER_IMAGE_BACKEND -f backend/Dockerfile backend/
+    - docker push $DOCKER_IMAGE_BACKEND
+  only:
+    - main
+
+build-frontend:
+  stage: build
+  script:
+    - docker build -t $DOCKER_IMAGE_FRONTEND -f frontend/Dockerfile frontend/
+    - docker push $DOCKER_IMAGE_FRONTEND
+  only:
+    - main
+
+test-backend:
+  stage: test
+  services:
+    - name: postgres:15
+      alias: postgres
+  script:
+    - docker run --rm --env-file backend/.env --network host $DOCKER_IMAGE_BACKEND npm test
+  only:
+    - main
+
+test-frontend:
+  stage: test
+  script:
+    - docker run --rm $DOCKER_IMAGE_FRONTEND npm test
+  only:
+    - main
+
+deploy:
+  stage: deploy
+  script:
+    - ssh user@server "docker pull $DOCKER_IMAGE_BACKEND && docker pull $DOCKER_IMAGE_FRONTEND"
+    - ssh user@server "docker stop backend || true && docker stop frontend || true"
+    - ssh user@server "docker run -d --env-file backend/.env --network host --name backend $DOCKER_IMAGE_BACKEND"
+    - ssh user@server "docker run -d -p 3000:3000 --name frontend $DOCKER_IMAGE_FRONTEND"
+  only:
+    - main

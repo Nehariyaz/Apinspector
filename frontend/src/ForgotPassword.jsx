@@ -1,5 +1,5 @@
 
-
+import RightBg from "./RightBg.jsx";
 import React from 'react';
 
 const ForgotPassword = () => {
@@ -28,13 +28,7 @@ const ForgotPassword = () => {
       </div>
       </div>
 
-      <div className="col-md-6 bg-section d-flex flex-column">
-            <img src="insurance.svg" alt="no image" className="img" />
-            <div className="card-body text-center">
-            <h4 className="m-2">
-              Confirm API endpoints, methods and integrations are functioning as expected.</h4>
-            </div>
-          </div>
+      <RightBg />
 
       </div>
       </div>
