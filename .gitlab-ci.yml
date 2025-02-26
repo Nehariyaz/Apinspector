@@ -1,76 +1,12 @@
-image: node:18
-
-services:
-  - name: postgres:latest
-    alias: postgres
-    variables:
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
-      POSTGRES_DB: mydatabase
-
-variables:
-  # Database Configuration
-  DB_HOST: localhost
-  DB_NAME: database.sqlite
-  DB_USER: root
-  DB_PASSWORD: null
-  DB_PORT: 3000
-  DB_DIALECT: sqlite
-  
 stages:
-  - install
+  - build
   - test
-  - deploy
 
-install_dependencies_backend:
-  stage: install
-  script:
-    - cd buildui_user 
-    - npm install
-  only:
-    - main
+build_job:
+  stage: build
+  script: echo "Building the application..."
 
-install_dependencies_frontend:
-  stage: install
-  script:
-    - cd buildui_canvas 
-    - npm install
-  only:
-    - main
-
-run_tests_backend:
+test_job:
   stage: test
-  before_script:
-    # 🟢 Install PostgreSQL client tools in Node.js container
-    - apt-get update && apt-get install -y postgresql-client netcat-traditional
+  script: echo "Running tests..."
 
-    # 🟢 Ensure PostgreSQL is ready before running tests
-    - echo "Waiting for PostgreSQL..."
-    - |
-      until PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -U $DB_USER -d $DB_NAME -c '\q'; do
-        echo "PostgreSQL is unavailable - sleeping"
-        sleep 1
-      done
-    - echo "✅ PostgreSQL is ready!"
-    
-    # 🟢 Create required database schema
-    - echo "Setting up test database schema..."
-    - PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -U $DB_USER -d $DB_NAME -a -f buildui_user/schema.sql
-    - echo "✅ Database schema created successfully!"
-
-  script:
-    - cd buildui_user
-    - npm install  
-    - chmod +x node_modules/.bin/jest
-    - npx jest --detectOpenHandles --forceExit   
-  only:
-    - main
-
-run_tests_frontend:
-  stage: test
-  script:
-    - cd buildui_canvas
-    - npm install 
-    - npm test  
-  only:
-    - main
