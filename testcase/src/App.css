@@ -1,0 +1,117 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.container-fluid {
+  height: 100vh;
+}
+
+.content {
+  background-color: #fff;
+  border-left: 1px solid #E2E8F0;
+  border-radius: 8px;
+}
+
+.container {
+  display: flex;
+  flex-direction: row; /* Side-by-side layout for navbar and content */
+  height: 100vh; /* Full height of the viewport */
+}
+
+.vertical-navbar {
+  width: 64px; /* Adjust width as needed */
+  background-color: #F8FAFC; /* Light grayish background */
+  padding: 10px;
+  height: 100%; /* Full height of the container */
+}
+body{
+  background-color: #F8FAFC;
+}
+
+.content {
+  flex: 1; 
+  margin: 0ch;/* Take up remaining space */
+/* 1-inch margin at the top */
+  padding: 0; /* Remove padding */
+  background-color: #FFFFFF; /* White background for content */
+  border: 1px solid #E2E8F0; /* Light border color */
+  border-radius: 8px; /* Rounded edges */
+  box-sizing: border-box; /* Ensure padding and border are included in the element's dimensions */
+  max-width: 100%; /* Ensure the container doesn't overflow */
+}
+
+/* Style the first row of the container */
+.content .first-row {
+  background-color: #F8FAFC; /* Same color as the navbar */
+  padding: 0; /* Remove padding */
+  border-radius: 8px 8px 0 0; /* Rounded edges at the top */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .vertical-navbar {
+    width: 56px; /* Reduce navbar width */
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    flex-direction: column; /* Stack navbar and content vertically */
+  }
+
+  .vertical-navbar {
+    width: 100%; /* Full width for mobile */
+    height: auto; /* Auto height for mobile */
+  }
+}   .vertical-navbar {
+  display: flex;
+  flex-direction: column;
+  width: 64px; /* Adjust width as needed */
+  background-color: #F8FAFC; /* Light grayish background */
+  padding: 10px;
+  height: 100%; /* Full height of the container */
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column; /* Stack logo and label vertically */
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+  color: #1E293B; /* Dark text color for contrast */
+  text-decoration: none; /* Remove underline from links */
+  padding: 10px; /* Rounded edges */
+  background-color: #F8FAFC; /* Same as navbar background */
+  transition:  0.3s ease, transform 0.3s ease; /* Smooth transitions */
+}
+
+/* Hover effect */
+.nav-item:hover {
+  background-color: #eaf1fa; /* Light hover effect */
+  transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+/* Selected state */
+.nav-item.selected {
+  background-color: #EAEAEA; /* Darker background for selected item */
+  color: #000000; /* Darker text color for selected item */
+}
+
+.nav-logo {
+  width: 28px; /* Adjust logo size */
+  height: 28px;
+  margin-bottom: 5px; /* Space between logo and label */
+}
+
+.nav-label {
+  font-size: 12px; /* Smaller font size */
+  text-align: center; /* Center-align text */
+}
+@media (max-width: 768px) {
+    .vertical-navbar {
+      width: 56px; /* Further reduce width */
+      padding: 5px; /* Reduce padding */
+    }
+}
+
