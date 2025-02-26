@@ -1,24 +1,12 @@
 stages:
   - build
   - test
-  - deploy
 
-job_build:
+build_job:
   stage: build
-  script:
-    - echo "Building the application..."
-    - mvn clean package  # Example for Java projects
+  script: echo "Building the application..."
 
-job_test:
+test_job:
   stage: test
-  script:
-    - echo "Running tests..."
-    - mvn test
+  script: echo "Running tests..."
 
-job_deploy:
-  stage: deploy
-  script:
-    - echo "Deploying application..."
-    - ./deploy.sh  # Example deployment script
-  only:
-    - main  # Deploy only on main branch
