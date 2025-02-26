@@ -9,7 +9,7 @@ const Testcase = () => {
       name: '',
       method: 'GET',
       url: '',
-      queryParams: [{ key: '', value: '', description: '' }],
+      queryParams: [{ key: '', value: '', description: '' }], //this is query params
       body: '',
     },
   ]);
