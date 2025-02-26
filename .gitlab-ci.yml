@@ -2,7 +2,7 @@ image: docker:latest
 
 services:
   - docker:dind
-  - postgres:15  
+  - postgres:15
 
 variables:
   DOCKER_IMAGE_BACKEND: "$CI_REGISTRY_IMAGE/backend:$CI_COMMIT_REF_SLUG"
@@ -17,7 +17,7 @@ stages:
   - deploy
 
 before_script:
-  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
 
 # ---------------- BUILD STAGE ----------------
 
@@ -26,6 +26,9 @@ build-backend:
   script:
     - docker build -t $DOCKER_IMAGE_BACKEND -f backend/Dockerfile backend/
     - docker push $DOCKER_IMAGE_BACKEND
+  tags:
+    - docker
+    - build
   only:
     - main
 
@@ -34,6 +37,9 @@ build-frontend:
   script:
     - docker build -t $DOCKER_IMAGE_FRONTEND -f frontend/Dockerfile frontend/
     - docker push $DOCKER_IMAGE_FRONTEND
+  tags:
+    - docker
+    - build
   only:
     - main
 
@@ -46,6 +52,9 @@ test-backend:
       alias: postgres
   script:
     - docker run --rm --env-file backend/.env --network host $DOCKER_IMAGE_BACKEND npm test
+  tags:
+    - docker
+    - test
   only:
     - main
 
@@ -53,6 +62,9 @@ test-frontend:
   stage: test
   script:
     - docker run --rm $DOCKER_IMAGE_FRONTEND npm test
+  tags:
+    - docker
+    - test
   only:
     - main
 
@@ -61,9 +73,13 @@ test-frontend:
 deploy:
   stage: deploy
   script:
-    - ssh $SSH_HOST@$SSH_USER "docker pull $DOCKER_IMAGE_BACKEND && docker pull $DOCKER_IMAGE_FRONTEND"
-    - ssh $SSH_HOST@$SSH_USER "docker stop backend || true && docker stop frontend || true"
-    - ssh $SSH_HOST@$SSH_USER "docker run -d --env-file backend/.env --network host --name backend $DOCKER_IMAGE_BACKEND"
-    - ssh $SSH_HOST@$SSH_USER "docker run -d -p 3000:3000 --name frontend $DOCKER_IMAGE_FRONTEND"
+    - ssh $SSH_USER@$SSH_HOST "docker pull $DOCKER_IMAGE_BACKEND && docker pull $DOCKER_IMAGE_FRONTEND"
+    - ssh $SSH_USER@$SSH_HOST "docker stop backend || true && docker rm backend || true"
+    - ssh $SSH_USER@$SSH_HOST "docker stop frontend || true && docker rm frontend || true"
+    - ssh $SSH_USER@$SSH_HOST "docker run -d --restart always --env-file backend/.env --network host --name backend $DOCKER_IMAGE_BACKEND"
+    - ssh $SSH_USER@$SSH_HOST "docker run -d --restart always -p 3000:3000 --name frontend $DOCKER_IMAGE_FRONTEND"
+  tags:
+    - deploy
+    - production
   only:
     - main
