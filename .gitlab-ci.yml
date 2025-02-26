@@ -1,85 +1,24 @@
-image: docker:latest
-
-services:
-  - docker:dind
-  - postgres:15
-
-variables:
-  DOCKER_IMAGE_BACKEND: "$CI_REGISTRY_IMAGE/backend:$CI_COMMIT_REF_SLUG"
-  DOCKER_IMAGE_FRONTEND: "$CI_REGISTRY_IMAGE/frontend:$CI_COMMIT_REF_SLUG"
-  POSTGRES_DB: "mydb"
-  POSTGRES_USER: "postgres"
-  POSTGRES_PASSWORD: "postgres"
-
 stages:
   - build
   - test
   - deploy
 
-before_script:
-  - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
-
-# ---------------- BUILD STAGE ----------------
-
-build-backend:
+job_build:
   stage: build
   script:
-    - docker build -t $DOCKER_IMAGE_BACKEND -f backend/Dockerfile backend/
-    - docker push $DOCKER_IMAGE_BACKEND
-  tags:
-    - docker
-    - build
-  only:
-    - main
+    - echo "Building the application..."
+    - mvn clean package  # Example for Java projects
 
-build-frontend:
-  stage: build
-  script:
-    - docker build -t $DOCKER_IMAGE_FRONTEND -f frontend/Dockerfile frontend/
-    - docker push $DOCKER_IMAGE_FRONTEND
-  tags:
-    - docker
-    - build
-  only:
-    - main
-
-# ---------------- TEST STAGE ----------------
-
-test-backend:
-  stage: test
-  services:
-    - name: postgres:15
-      alias: postgres
-  script:
-    - docker run --rm --env-file backend/.env --network host $DOCKER_IMAGE_BACKEND npm test
-  tags:
-    - docker
-    - test
-  only:
-    - main
-
-test-frontend:
+job_test:
   stage: test
   script:
-    - docker run --rm $DOCKER_IMAGE_FRONTEND npm test
-  tags:
-    - docker
-    - test
-  only:
-    - main
+    - echo "Running tests..."
+    - mvn test
 
-# ---------------- DEPLOY STAGE ----------------
-
-deploy:
+job_deploy:
   stage: deploy
   script:
-    - ssh $SSH_USER@$SSH_HOST "docker pull $DOCKER_IMAGE_BACKEND && docker pull $DOCKER_IMAGE_FRONTEND"
-    - ssh $SSH_USER@$SSH_HOST "docker stop backend || true && docker rm backend || true"
-    - ssh $SSH_USER@$SSH_HOST "docker stop frontend || true && docker rm frontend || true"
-    - ssh $SSH_USER@$SSH_HOST "docker run -d --restart always --env-file backend/.env --network host --name backend $DOCKER_IMAGE_BACKEND"
-    - ssh $SSH_USER@$SSH_HOST "docker run -d --restart always -p 3000:3000 --name frontend $DOCKER_IMAGE_FRONTEND"
-  tags:
-    - deploy
-    - production
+    - echo "Deploying application..."
+    - ./deploy.sh  # Example deployment script
   only:
-    - main
+    - main  # Deploy only on main branch
