@@ -1,58 +1,53 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
-import './Testcase.css';
+import './Testcase.css'; // Import custom CSS
 
 const Testcase = () => {
-  // State to manage the list of test cases, initialized with one default test case
   const [testCases, setTestCases] = useState([
     {
       name: '',
       method: 'GET',
       url: '',
-      queryParams: [{ key: '', value: '', description: '' }], //this is query params
+      queryParams: [{ key: '', value: '', description: '' }],
       body: '',
     },
   ]);
 
-  // Function to add a new row
   const addNewRow = () => {
-    const newTestCase = {
-      name: '',
-      method: 'GET',
-      url: '',
-      queryParams: [{ key: '', value: '', description: '' }],
-      body: '',
-    };
-    setTestCases([...testCases, newTestCase]);
+    setTestCases([
+      ...testCases,
+      {
+        name: '',
+        method: 'GET',
+        url: '',
+        queryParams: [{ key: '', value: '', description: '' }],
+        body: '',
+      },
+    ]);
   };
 
-  // Function to handle input changes
   const handleInputChange = (index, field, value) => {
     const updatedTestCases = [...testCases];
     updatedTestCases[index][field] = value;
     setTestCases(updatedTestCases);
   };
 
-  // Function to handle query parameter changes
   const handleQueryParamChange = (index, paramIndex, field, value) => {
     const updatedTestCases = [...testCases];
     updatedTestCases[index].queryParams[paramIndex][field] = value;
     setTestCases(updatedTestCases);
   };
 
-  // Function to add a new query parameter
   const addQueryParam = (index) => {
     const updatedTestCases = [...testCases];
     updatedTestCases[index].queryParams.push({ key: '', value: '', description: '' });
     setTestCases(updatedTestCases);
   };
 
-  // Function to save a test case
   const saveTestCase = (index) => {
     console.log('Saved test case:', testCases[index]);
   };
 
-  // Function to delete a test case
   const deleteTestCase = (index) => {
     const updatedTestCases = testCases.filter((_, i) => i !== index);
     setTestCases(updatedTestCases);
@@ -68,22 +63,19 @@ const Testcase = () => {
         <table className="table table-borderless">
           <thead className="thead-light">
             <tr>
-              <th className="p-3 text-secondary " rowSpan={2}>
+              <th className="p-3 text-secondary fw-normal" rowSpan={2}>
                 Name
               </th>
-              <th className="p-3 text-secondary " rowSpan={2}>
-                Method
+              <th className="p-3 text-secondary fw-normal" rowSpan={2}>
+                Method &nbsp; URL
               </th>
-              <th className="p-3 text-secondary " rowSpan={2}>
-                URL
-              </th>
-              <th className="p-3 text-secondary " style={{ width: '300px' }} rowSpan={2}>
+              <th className="p-3 text-secondary fw-normal" style={{ width: '300px' }} rowSpan={2}>
                 Query Parameters
               </th>
-              <th className="p-3 text-secondary " style={{ width: '300px' }} rowSpan={2}>
+              <th className="p-3 text-secondary fw-normal" style={{ width: '300px' }} rowSpan={2}>
                 Body
               </th>
-              <th className="p-3 text-secondary " rowSpan={2}>
+              <th className="p-3 text-secondary fw-normal" rowSpan={2}>
                 Actions
               </th>
             </tr>
@@ -92,7 +84,6 @@ const Testcase = () => {
           <tbody>
             {testCases.map((testCase, index) => (
               <tr key={index}>
-                {/* Name */}
                 <td>
                   <input
                     type="text"
@@ -102,31 +93,30 @@ const Testcase = () => {
                   />
                 </td>
 
-                {/* Method */}
                 <td>
-                  <select
-                    className="form-control fs-7"
-                    value={testCase.method}
-                    onChange={(e) => handleInputChange(index, 'method', e.target.value)}
-                  >
-                    <option value="GET">GET</option>
-                    <option value="POST">POST</option>
-                    <option value="PUT">PUT</option>
-                    <option value="DELETE">DELETE</option>
-                  </select>
+                  <div className="d-flex align-items-center gap-0">
+                    <select
+                      className="form-select fs-7"
+                      style={{ width: '100px', borderRadius: '4px 0 0 4px' }}
+                      value={testCase.method}
+                      onChange={(e) => handleInputChange(index, 'method', e.target.value)}
+                    >
+                      <option value="GET">GET</option>
+                      <option value="POST">POST</option>
+                      <option value="PUT">PUT</option>
+                      <option value="DELETE">DELETE</option>
+                    </select>
+                    <input
+                      type="text"
+                      className="form-control fs-7"
+                      style={{ borderRadius: '0 4px 4px 0', flex: 1 }}
+                      value={testCase.url}
+                      onChange={(e) => handleInputChange(index, 'url', e.target.value)}
+                      placeholder="https://example.com/api"
+                    />
+                  </div>
                 </td>
 
-                {/* URL */}
-                <td>
-                  <input
-                    type="text"
-                    className="form-control fs-7"
-                    value={testCase.url}
-                    onChange={(e) => handleInputChange(index, 'url', e.target.value)}
-                  />
-                </td>
-
-                {/* Query Parameters */}
                 <td style={{ width: '300px' }}>
                   {testCase.queryParams.map((param, paramIndex) => (
                     <div key={paramIndex} className="mb-2">
@@ -159,12 +149,11 @@ const Testcase = () => {
                       />
                     </div>
                   ))}
-                  <button onClick={() => addQueryParam(index)} className="btn btn-secondary btn-sm fs-7">
+                  <button onClick={() => addQueryParam(index)} className="btn-query btn-sm fs-7">
                     Add Query Param
                   </button>
                 </td>
 
-                {/* Body */}
                 <td style={{ width: '300px' }}>
                   <textarea
                     className="form-control fs-7"
@@ -174,20 +163,21 @@ const Testcase = () => {
                   />
                 </td>
 
-                {/* Actions */}
                 <td>
-                  <button
-                    onClick={() => saveTestCase(index)}
-                    className="btn btn-success btn-sm fs-7"
-                  >
-                    Save
-                  </button>
-                  <button
-                    onClick={() => deleteTestCase(index)}
-                    className="btn btn-danger btn-sm ms-2 fs-7"
-                  >
-                    Delete
-                  </button>
+                  <div className="d-flex flex-wrap gap-2">
+                    <button
+                      onClick={() => saveTestCase(index)}
+                      className="btn btn-success btn-sm fs-7"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={() => deleteTestCase(index)}
+                      className="btn btn-danger btn-sm fs-7"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

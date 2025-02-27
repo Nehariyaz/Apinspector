@@ -15,14 +15,14 @@
     margin-top: 20px; /* Add margin above the table */
     font-size: small;
   }
-  .query{
-    background-color: #1c8435;
+  .btn-query{
+    background-color: #027f31;
     color: white;
     border-radius: 5px;
 }
 
 .create-button {
-    background-color: #1c8936; /* Green background */
+    background-color:#027f31; /* Green background */
     border-color: #218838; /* Darker green border */
     color: white; /* White text */
     padding: 0.75rem 1.5rem; /* Reduced padding */
