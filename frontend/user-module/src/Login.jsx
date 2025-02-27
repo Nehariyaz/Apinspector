@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom'; 
 import ReCAPTCHA from "react-google-recaptcha";
 import axios from 'axios';
-import RightBg from "./RightBg.jsx";
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -34,11 +33,11 @@ const handleSubmit = async (event) => {
     const response = await axios.post("http://localhost:3000/api/login", {
       email,
       password,
-      captchaToken, 
+      captchaToken,  // Send reCAPTCHA response if needed
     });
 
-    localStorage.setItem("token", response.data.token); 
-    alert(response.data.message); 
+    localStorage.setItem("token", response.data.token); // Store JWT token
+    alert(response.data.message); // Show success message
   } catch (error) {
     setErrorMessage(error.response?.data?.message || "Login failed!");
     alert(error)
@@ -48,7 +47,7 @@ const handleSubmit = async (event) => {
 
   return (
     <div className="container-fluid app-container">
-    <div className="row align-items-stretch g-0">
+    <div className="row align-items-stretch">
 
         <div className="col-md-6 d-flex justify-content-center align-items-center ">
             <div className="card">
@@ -91,12 +90,12 @@ const handleSubmit = async (event) => {
               </form>
 
               <div className="d-flex justify-content-between mt-3">
-                <Link to="/forgot-password" className="text1">
+                <Link to="/forgot-password" className="text-decoration-none text-primary">
                   Forgot Password?
                 </Link>
                 <div className="mb-3">
                 <label className="form-label" >Don't have an Account? </label>
-                <Link to="/signup" className="text1">
+                <Link to="/signup" className="text-decoration-none text-primary">
                   Sign Up
                 </Link>
                 </div>
@@ -105,7 +104,12 @@ const handleSubmit = async (event) => {
           </div>
         
 
-          <RightBg />
+          <div className="col-md-6 bg-section d-flex flex-column">
+            <img src="insurance.svg" alt="no image" className="img" />
+            <div className="card-body text-center">
+            <h3 className="mt-2">confirm  API's endpoints, methods, and integrations are functioning as expected.</h3>
+            </div>
+          </div>
         
 
       
