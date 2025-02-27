@@ -48,11 +48,18 @@ exports.register = async (req, res) => {
             return res.status(400).json({ message: "reCAPTCHA failed, please try again" });
         }
 
+        const userExist = await User.findOne({ where: { email } });
+
+        if (userExist) {
+            //console.log("User not found!");
+            return res.status(400).json({ message: "User already exists" });
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = await User.create({ username, email, password: hashedPassword });
 
         try {
-            await sendEmail(email, "Welcome!", "Thank you for registering with us.");
+            await sendEmail(email, "Welcome!",username, "Thank you for registering with us.");
         } catch (emailError) {
             console.error("Email Sending Error:", emailError);
             return res.status(500).json({ message: "User registered, but email failed to send" });
@@ -81,7 +88,7 @@ exports.login = async (req, res) => {
 
         if (!user) {
             //console.log("User not found!");
-            return res.status(400).json({ message: "Invalid credentials" });
+            return res.status(400).json({ message: "User does not exist" });
         }
 
         //console.log("Stored Hashed Password:", user.password);
@@ -94,7 +101,7 @@ exports.login = async (req, res) => {
         }
         const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-        await sendEmail(user.email, "Login Alert", "You have successfully logged in.");
+        await sendEmail(user.email, "Login Alert", user.username, "You have successfully logged in.");
 
         return res.status(200).json({ message: "Login successful", token });
 
