@@ -60,10 +60,6 @@ body{
     flex-direction: column; /* Stack navbar and content vertically */
   }
 
-  .vertical-navbar {
-    width: 100%; /* Full width for mobile */
-    height: auto; /* Auto height for mobile */
-  }
 }   .vertical-navbar {
   display: flex;
   flex-direction: column;
