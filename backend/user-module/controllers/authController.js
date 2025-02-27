@@ -30,15 +30,15 @@ exports.register = async (req, res) => {
     try {
         console.log("Incoming Request Body:", JSON.stringify(req.body, null, 2));
         console.log("Incoming Request Headers:", JSON.stringify(req.headers, null, 2));
-        const { email, password, captchaToken } = req.body;
+        const { username, email, password, captchaToken } = req.body;
 
-        function generateUsername(email) {
+        /* function generateUsername(email) {
             const usernameBase = email.split("@")[0];
             const randomSuffix = Math.floor(1000 + Math.random() * 9000);
             return `${usernameBase}${randomSuffix}`;
         }
 
-        const username = generateUsername(email);
+        const username = generateUsername(email); */
         //console.log("This is a token",captchaToken)
         if (!req.body || Object.keys(req.body).length === 0) {
             return res.status(400).json({ message: "Request body is missing or empty" });
