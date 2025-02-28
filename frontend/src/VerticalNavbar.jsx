@@ -1,60 +1,59 @@
-.nav-item {
-  width: 60px;
-  text-align: center;
-  transition: 0.3s ease, transform 0.3s ease;
-}
-.vertical-navbar {
-  width: 64px; /* Adjust width as needed */
-  background-color: #F8FAFC; /* Light grayish background */
-  padding: 10px;
-  height: 100%; /* Full height of the container */
-}
-.nav-item:hover {
-  background-color: #eaf1fa; /* Light hover effect */
-  transform: scale(1.05); /* Slightly enlarge on hover */
-}
-.nav-item.selected {
-  background-color: #EAEAEA; /* Darker background for selected item */
-  color: #000000; /* Darker text color for selected item */
-}
+import React, { useState } from 'react';
+import { Routes, Route, NavLink, useLocation } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './VerticalNavbar.css';
 
-.nav-logo {
-  width: 28px;
-  height: 28px;
-}
+// Import logo images
+import logoRequest from './assets/l.png';
+import logoTestcase from './assets/looo.png';
+import logoAssertion from './assets/loo.png';
+import logoReport from './assets/lo.png';
 
-.content {
-  flex: 1; /* Take up remaining space */
-  margin-top: 1in; /* 1-inch margin at the top */
-  padding: 0; /* Remove padding */
-  background-color: #FFFFFF; /* White background for content */
-  border: 1px solid #E2E8F0; /* Light border color */
-  border-radius: 8px; /* Rounded edges */
-  box-sizing: border-box; /* Ensure padding and border are included in the element's dimensions */
-  max-width: 100%; /* Ensure the container doesn't overflow */
-}
-  .nav-logo {
-    width: 20px; /* Smaller logo */
-    height: 20px;
-  }
+// Import page components
+import Request from './Request';
+import Testcase from './pages/Testcase';
+import Assertion from './pages/Assertion';
+import Report from './pages/Report';
 
-  .nav-label {
-    font-size: 10px; /* Smaller font size */
-  }
+const VerticalNavbar = () => {
+  const location = useLocation();
+  const [selectedItem, setSelectedItem] = useState(location.pathname);
 
-/* For mobile devices */
-@media (max-width: 480px) {
-  .vertical-navbar {
-    width: 48px; /* Even smaller width */
-    padding: 5px;
-  }
+  const navItems = [
+    { id: 1, label: 'Request', logo: logoRequest, path: '/' },
+    { id: 2, label: 'Testcase', logo: logoTestcase, path: '/testcase' },
+    { id: 3, label: 'Assertion', logo: logoAssertion, path: '/assertion' },
+    { id: 4, label: 'Report', logo: logoReport, path: '/report' },
+  ];
 
-  .nav-logo {
-    width: 16px; /* Smaller logo */
-    height: 16px;
-  }
+  return (
+    <div className="d-flex">
+      {/* Vertical Navbar */}
+      <div className="d-flex flex-column align-items-center bg-light vh-100 p-2 border-end">
+        {navItems.map((item) => (
+          <NavLink
+            to={item.path}
+            key={item.id}
+            className={`nav-item d-flex flex-column align-items-center justify-content-center p-2 rounded ${selectedItem === item.path ? 'selected' : ''}`}
+            onClick={() => setSelectedItem(item.path)}
+          >
+            <img src={item.logo} alt={`${item.label} logo`} className="nav-logo mb-1" />
+            <span className="nav-label">{item.label}</span>
+          </NavLink>
+        ))}
+      </div>
 
-  .nav-label {
-    font-size: 8px; /* Smaller font size */
-  }
-}
+      {/* Content Area with Routing */}
+      <div className="content flex-grow-1 w-100 m-0 p-0">
+        <Routes>
+          <Route path="/" element={<Request />} />
+          <Route path="/testcase" element={<Testcase />} />
+          <Route path="/assertion" element={<Assertion />} />
+          <Route path="/report" element={<Report />} />
+        </Routes>
+      </div>
+    </div>
+  );
+};
+
+export default VerticalNavbar;
