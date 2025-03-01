@@ -1,34 +1,33 @@
 import ReCAPTCHA from "react-google-recaptcha";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";  // Import useNavigate
 import axios from "axios";
-
-
+import "@/styles/Login.css"
 
 const SignUp = () => {
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [captchaToken, setCaptchaToken] = useState(null);
-  const [username, setUsername] = useState("");
+  const navigate = useNavigate(); // Initialize navigate function
 
-
-  const handleCaptchaChange = (captchaToken) => {
-    console.log("CAPTCHA Token:", captchaToken);
-    setCaptchaToken(captchaToken);
+  const handleCaptchaChange = (token) => {
+    console.log("CAPTCHA Token:", token);
+    setCaptchaToken(token);
   };
-
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!email || !password || !confirmPassword) {
-      setErrorMessage('Please fill in all fields.');
+    if (!username || !email || !password || !confirmPassword) {
+      setErrorMessage("Please fill in all fields.");
       return;
     }
 
     if (password !== confirmPassword) {
-      setErrorMessage('Passwords do not match.');
+      setErrorMessage("Passwords do not match.");
       return;
     }
 
@@ -36,31 +35,30 @@ const SignUp = () => {
       setErrorMessage("Please verify the CAPTCHA.");
       return;
     }
-    console.log("Sending request with:", { email, password, captchaToken });
+
+    console.log("Sending request with:", { username, email, password, captchaToken });
 
     try {
-      const response = await fetch("http://localhost:3000/api/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, captchaToken }),
+      const response = await axios.post("http://localhost:3000/api/register", {
+        username,
+        email,
+        password,
+        captchaToken,
       });
-      console.log("error")
-      const data = await response.json(); 
-      
-      console.log("Server Response:", data); 
-      
-      if (response.ok) {
-        alert("Registration successful! Please log in.");
-        window.location.href = "/login"; 
+
+      console.log("Server Response:", response.data);
+
+      if (response.status === 200) {
+        alert("Registration successful! Redirecting...");
+        navigate("/testcase"); // Redirect to TestCase page
       } else {
-        setErrorMessage(data.message || "Registration failed.");
+        setErrorMessage(response.data.message || "Registration failed.");
       }
     } catch (error) {
-      setErrorMessage("An error occurred. Please try again.",error);
-      alert(error)
+      console.error("Signup Error:", error);
+      setErrorMessage("An error occurred. Please try again.");
     }
   };
-
 
   return (
     <div className="container-fluid app-container">
@@ -69,17 +67,17 @@ const SignUp = () => {
           <div className="card">
             <h2 className="text">Get Started Now</h2>
             <form onSubmit={handleSubmit}>
-            <div className="mb-3">
-            <label className="form-label">Username</label>
-            <input
-              type="text"
-              id="username"
-              className="form-control"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-          </div>
+              <div className="mb-3">
+                <label className="form-label">Username</label>
+                <input
+                  type="text"
+                  id="username"
+                  className="form-control"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                />
+              </div>
               
               <div className="mb-3">
                 <label className="form-label">Email</label>
@@ -132,17 +130,14 @@ const SignUp = () => {
         </div>
 
         <div className="col-md-6 bg-section d-flex flex-column">
-            <img src="insurance.svg" alt="no image" className="img" />
-            <div className="card-body text-center">
-            <h3 className="mt-2">confirm  API's endpoints, methods, and integrations are functioning as expected.</h3>
-            </div>
+          <img src="insurance.svg" alt="no image" className="img" />
+          <div className="card-body text-center">
+            <h3 className="mt-2">Confirm API endpoints, methods, and integrations are functioning as expected.</h3>
           </div>
-        
-
+        </div>
       </div>
     </div>
   );
 };
 
 export default SignUp;
-

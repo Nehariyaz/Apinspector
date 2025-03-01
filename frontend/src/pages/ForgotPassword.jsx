@@ -1,6 +1,6 @@
-
-
+import { Link, useNavigate } from 'react-router-dom'; 
 import React from 'react';
+import "@/styles/Login.css"
 
 const ForgotPassword = () => {
   return (

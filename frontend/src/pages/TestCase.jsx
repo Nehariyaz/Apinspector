@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
-import './Testcase.css'; // Import custom CSS
+import "@/styles/TestCase.css";
+// Import custom CSS
 
-const Testcase = () => {
+const TestCase = () => {
   const [testCases, setTestCases] = useState([
     {
       name: '',
@@ -188,4 +189,4 @@ const Testcase = () => {
   );
 };
 
-export default Testcase;
+export default TestCase;

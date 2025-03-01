@@ -1,14 +1,11 @@
 
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Login from './Login';
-import ForgotPassword from './ForgotPassword'; 
-import SignUp from './SignUp'; 
-import './Login.css';
-import VerticalNavbar from './VerticalNavbar';
-import HorizontalNavbar from './HorizontalNavbar'; // Import the HorizontalNavbar component
-import Testcase from './Testcase';
-;
+import Login from './pages/Login';
+import ForgotPassword from './pages/ForgotPassword'; 
+import SignUp from './pages/SignUp'; 
+import TestCase from './pages/TestCase';
+
 
 
 function App() {
@@ -19,6 +16,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/testcase" element={<TestCase />}/>
       </Routes>
     </Router>
   );

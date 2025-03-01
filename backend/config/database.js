@@ -1,3 +1,4 @@
+console.log("database.js is being loaded...");
 const { Sequelize } = require("sequelize");
 require("dotenv").config();
 

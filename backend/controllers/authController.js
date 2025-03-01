@@ -29,7 +29,7 @@ const verifyCaptcha = async (captchaToken) => {
 exports.register = async (req, res) => {
     try {
         console.log("Incoming Request Body:", JSON.stringify(req.body, null, 2));
-        console.log("Incoming Request Headers:", JSON.stringify(req.headers, null, 2));
+        //console.log("Incoming Request Headers:", JSON.stringify(req.headers, null, 2));
         const { username, email, password, captchaToken } = req.body;
 
         /* function generateUsername(email) {
@@ -42,6 +42,7 @@ exports.register = async (req, res) => {
         //console.log("This is a token",captchaToken)
         if (!req.body || Object.keys(req.body).length === 0) {
             return res.status(400).json({ message: "Request body is missing or empty" });
+            console.log("this is empty req body");
         }
 
         if (!captchaToken || !(await verifyCaptcha(captchaToken))) {
@@ -49,24 +50,25 @@ exports.register = async (req, res) => {
         }
 
         const userExist = await User.findOne({ where: { email } });
-
+        
         if (userExist) {
-            //console.log("User not found!");
+            console.log("User exists");
             return res.status(400).json({ message: "User already exists" });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = await User.create({ username, email, password: hashedPassword });
-
+        console.log("User body:",user.username,user.email);
         try {
-            await sendEmail(email, "Welcome!",username, "Thank you for registering with us.");
+            await sendEmail(email, "Welcome!", "Thank you for registering with us.");
         } catch (emailError) {
             console.error("Email Sending Error:", emailError);
             return res.status(500).json({ message: "User registered, but email failed to send" });
         }
 
         //console.log("Hello");
-        return res.status(201).json({ message: "User registered successfully" });
+        return res.status(200).json({ message: "User registered successfully" });
+        console.log("Hello");
 
     } catch (err) {
         console.error("Registration Error:", err);
@@ -122,7 +124,6 @@ exports.logout = (req, res) => {
     res.redirect("/login");
 };
 
-// Dashboard
 exports.dashboard = async (req, res) => {
     if (req.headers["content-type"] === "application/json") {
         return res.status(200).json({ message: `Welcome ${req.user.username}` });
