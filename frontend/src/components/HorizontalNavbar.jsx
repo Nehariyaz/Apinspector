@@ -1,36 +1,33 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import logo from './assets/apilogo.jpg';
+import "bootstrap-icons/font/bootstrap-icons.css";
+import logo from '../assets/apilogo.jpg';
+import "../styles/HorizontalNavbar.css";
 
 const HorizontalNavbar = () => {
-  const userProfileImage = "/path/to/user/profile.png"; // Update this path
   const userName = "John Doe"; // Replace with the logged-in user's name
 
   return (
-    <nav
-      className="navbar navbar-expand-lg navbar-light bg-light"
-      style={{
-        width: '100%', // Ensure the navbar takes up the full width
-        maxWidth: '100%', // Ensure it doesn't exceed the screen width
-        margin: 0, // Remove any default margins
-        padding: '0 16px', // Add some padding to the sides
-      }}
-    >
-      <div className="container-fluid">
-        {/* Logo Image Area on the left */}
-        <Link className="logoContainer navbar-brand" to="/">
+    <nav className="custom-navbar">
+      <div className="container-fluid d-flex justify-content-between align-items-center">
+        {/* Logo and Brand Name */}
+        <Link className="logoContainer navbar-brand d-flex align-items-center" to="/">
           <img
-            src={logo} // Replace with the path to your logo image
+            src={logo}
             alt="Logo"
-            width="30"
-            height="30"
-            className="d-inline-block align-top me-4"
+            width="40"
+            height="40"
+            className="d-inline-block align-top me-2"
           />
-          {' '}
-          <div className="logoHeading">APInspector</div>
+          <span className="logoHeading">APInspector</span>
         </Link>
 
+        {/* User Icon and Username */}
+        <div className="d-flex align-items-center">
+        <i className="bi bi-person-circle me-2" style={{ fontSize: '1.5rem' }}></i>
+          <span className="text-dark">{userName}</span>
+        </div>
       </div>
     </nav>
   );

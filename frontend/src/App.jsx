@@ -5,8 +5,9 @@ import Login from './pages/Login';
 import ForgotPassword from './pages/ForgotPassword'; 
 import SignUp from './pages/SignUp'; 
 import TestCase from './pages/TestCase';
-
-
+import Request from './pages/Request';
+import Report from './pages/Report';
+import Assertion from './pages/Assertion';
 
 function App() {
   return (
@@ -17,6 +18,9 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
         <Route path="/testcase" element={<TestCase />}/>
+        <Route path="/request" element={<Request />}/>
+        <Route path="/assertion" element={<Assertion />}/>
+        <Route path="/report" element={<Report />}/>
       </Routes>
     </Router>
   );

@@ -3,13 +3,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import ReCAPTCHA from "react-google-recaptcha";
 import axios from 'axios';
 import "@/styles/Login.css"
+
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [captchaToken, setCaptchaToken] = useState("");
   const [captchaVerified, setCaptchaVerified] = useState(false);
-  const navigate = useNavigate();  // Initialize navigate
+  const navigate = useNavigate(); 
 
   const siteKey = "6Lcak9wqAAAAABuhNvb8rOd5PDqozXUwr3xmaiap";
 
@@ -29,9 +30,9 @@ const Login = () => {
         captchaToken,
       });
       console.log("Login successful! Redirecting...");
-      localStorage.setItem("token", response.data.token); // Store JWT token
-      alert(response.data.message); // Show success message
-      navigate('/testcase');  // Redirect to TestCase page after successful login
+      localStorage.setItem("token", response.data.token);
+      alert(response.data.message); 
+      navigate('/request');  
     } catch (error) {
       setErrorMessage(error.response?.data?.message || "Login failed!");
     }

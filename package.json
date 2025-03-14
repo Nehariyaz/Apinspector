@@ -1,6 +1,8 @@
 {
   "dependencies": {
+    "bootstrap-icons": "^1.11.3",
     "cors": "^2.8.5",
+    "lucide-react": "^0.479.0",
     "yarn": "^1.22.22"
   }
 }

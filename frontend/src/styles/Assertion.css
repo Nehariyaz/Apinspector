@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+}
+
+.content {
+  flex: 1;
+  margin: 0;
+  padding: 20px;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+h1, h2 {
+  color: #1e293b;
+}
+
+.create-assertion-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.create-assertion-form {
+  display: flex;
+  gap: 10px;
+  flex: 1;
+  margin-right: 10px;
+}
+
+select, input {
+  padding: 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 5px;
+}
+
+select {
+  width: 180px;
+}
+
+input {
+  width: 220px;
+}
+
+.create-button {
+  background-color: #027f31;
+  color: white;
+  border-radius: 5px;
+  padding: 0.5rem 1rem; /* Reduced size */
+  font-size: 0.875rem; /* Slightly smaller font */
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.create-button:hover {
+  background-color: #218838;
+  transform: scale(1.05);
+}
+
+.testcase-table {
+  border: 1px solid #e2e8f0;
+  width: 100%;
+  max-width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-top: 20px;
+  font-size: small;
+}
+
+.testcase-table th {
+  background-color: #f8fafc;
+  color: #1e293b;
+  font-weight: normal;
+  padding: 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.testcase-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.edit-button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 5px;
+  font-size: 0.875rem;
+}
+
+.edit-button:hover {
+  background-color: #218838;
+}
+
+.delete-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.delete-button:hover {
+  background-color: #c82333;
+}
+
+@media (max-width: 768px) {
+  .create-assertion-form {
+    flex-direction: column;
+  }
+
+  select, input {
+    width: 100%;
+  }
+}

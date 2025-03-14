@@ -1,6 +1,6 @@
 import ReCAPTCHA from "react-google-recaptcha";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";  // Import useNavigate
+import { useNavigate } from "react-router-dom"; 
 import axios from "axios";
 import "@/styles/Login.css"
 
@@ -11,7 +11,7 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [captchaToken, setCaptchaToken] = useState(null);
-  const navigate = useNavigate(); // Initialize navigate function
+  const navigate = useNavigate(); 
 
   const handleCaptchaChange = (token) => {
     console.log("CAPTCHA Token:", token);
@@ -50,14 +50,18 @@ const SignUp = () => {
 
       if (response.status === 200) {
         alert("Registration successful! Redirecting...");
-        navigate("/testcase"); // Redirect to TestCase page
+        navigate("/request");
       } else {
         setErrorMessage(response.data.message || "Registration failed.");
       }
     } catch (error) {
-      console.error("Signup Error:", error);
-      setErrorMessage("An error occurred. Please try again.");
-    }
+        if(response.status==409){
+          setErrorMessage("User already exists");
+        }else{
+          console.error("Signup Error:", error);
+          setErrorMessage("An error occurred. Please try again.");
+        }
+      }
   };
 
   return (

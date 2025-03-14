@@ -1,26 +1,26 @@
 import React, { useState } from 'react';
 import { Routes, Route, NavLink, useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './components/VerticalNavbar.css';
+import '../styles/VerticalNavbar.css';
 
 // Import logo images
-import logoRequest from './assets/l.png';
-import logoTestcase from './assets/looo.png';
-import logoAssertion from './assets/loo.png';
-import logoReport from './assets/lo.png';
+import logoRequest from '../assets/l.png';
+import logoTestcase from '../assets/looo.png';
+import logoAssertion from '../assets/loo.png';
+import logoReport from '../assets/lo.png';
 
 // Import page components
-import Request from './Request';
-import Testcase from './pages/Testcase';
-import Assertion from './pages/Assertion';
-import Report from './pages/Report';
+import Request from '../pages/Request';
+import Testcase from '../pages/TestCase';
+import Assertion from '../pages/Assertion';
+import Report from '../pages/Report';
 
 const VerticalNavbar = () => {
   const location = useLocation();
   const [selectedItem, setSelectedItem] = useState(location.pathname);
 
   const navItems = [
-    { id: 1, label: 'Request', logo: logoRequest, path: '/' },
+    { id: 1, label: 'Request', logo: logoRequest, path: '/request' },
     { id: 2, label: 'Testcase', logo: logoTestcase, path: '/testcase' },
     { id: 3, label: 'Assertion', logo: logoAssertion, path: '/assertion' },
     { id: 4, label: 'Report', logo: logoReport, path: '/report' },
@@ -46,7 +46,7 @@ const VerticalNavbar = () => {
       {/* Content Area with Routing */}
       <div className="content flex-grow-1 w-100 m-0 p-0">
         <Routes>
-          <Route path="/" element={<Request />} />
+          <Route path="/request" element={<Request />} />
           <Route path="/testcase" element={<Testcase />} />
           <Route path="/assertion" element={<Assertion />} />
           <Route path="/report" element={<Report />} />
