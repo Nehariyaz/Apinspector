@@ -1,0 +1,43 @@
+/* Background section styling */
+.bg-section {
+  background-color: #D6FFD8;  /* Light green background */
+  height: 100vh;  /* Full viewport height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column; /* Ensures image and text stack correctly */
+  padding: 20px;
+}
+
+/* Image styling */
+.responsive-img {
+  max-width: 80%; /* Ensures it scales well */
+  height: auto;
+  margin-bottom: 20px;
+}
+
+/* Text container */
+.text-container {
+  max-width: 80%;
+  text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .bg-section {
+    height: auto;  /* Let content decide height on smaller screens */
+    padding: 40px 20px;
+  }
+
+  .responsive-img {
+    max-width: 60%;
+  }
+
+  .text-container {
+    max-width: 90%;
+  }
+
+  .info-text {
+    font-size: 1rem;
+  }
+}

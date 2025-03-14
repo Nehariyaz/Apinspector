@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom'; 
 import React from 'react';
 import "@/styles/Login.css"
+import RightBg from '../components/RightBg';
 
 const ForgotPassword = () => {
   return (
@@ -28,12 +29,7 @@ const ForgotPassword = () => {
       </div>
       </div>
 
-      <div class="col-md-6 bg-section d-flex flex-column">
-      <img src="insurance.svg" alt="no image" class="img" />
-            <div class="card-body text-center">
-            <h3 class="mt-2">confirm  API's endpoints, methods, and integrations are functioning as expected.</h3>
-            </div>
-      </div>
+      <RightBg></RightBg>
 
       </div>
       </div>

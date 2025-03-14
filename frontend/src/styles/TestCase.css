@@ -1,6 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-*{
-  font-family: "Poppins", serif;
+
+* {
+  font-family: "Poppins", sans-serif; 
+  margin: 0;
+  padding: 0;
 }
 
 .btn:hover{
@@ -18,14 +21,13 @@
     font-size: small;
   }
   .btn-query{
-    background-color: #027f31;
+    background-color: #28a745; 
     color: white;
     border-radius: 5px;
-    width: 1.5in;
 }
 
 .create-button {
-    background-color:#027f31;
+   background-color: #28a745; 
     border-color: #218838;
     color: white; 
     padding: 0.75rem 1.5rem;
@@ -96,27 +98,10 @@
   font-size: 0.875rem;
 }
 
-* {
-  font-family: "Poppins", sans-serif; 
-  margin: 0;
-  padding: 0;
-}
-
 body {
   margin: 0;
-  
-}
-
-.content {
-  background-color: #fff;
-  border-left: 1px solid #E2E8F0;
-  border-radius: 8px;
-}
-
-
-
-body{
   background-color: #F8FAFC;
+  
 }
 
 .content {

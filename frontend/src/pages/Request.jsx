@@ -25,10 +25,6 @@ const Request = () => {
                 <Save size={16} />
                 Save
               </button>
-              <button className="share btn d-flex align-items-center gap-2">
-                <Share size={16} />
-                Share
-              </button>
             </div>
             <button className="send btn d-flex align-items-center gap-2">
               <Play size={16} />

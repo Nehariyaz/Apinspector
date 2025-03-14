@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; 
 import axios from "axios";
 import "@/styles/Login.css"
+import RightBg from '../components/RightBg';
 
 const SignUp = () => {
   const [username, setUsername] = useState("");
@@ -65,80 +66,77 @@ const SignUp = () => {
   };
 
   return (
-    <div className="container-fluid app-container">
-      <div className="row align-items-stretch g-0">
-        <div className="col-md-6 d-flex justify-content-center align-items-center">
-          <div className="card">
-            <h2 className="text">Get Started Now</h2>
+    <div class="container-fluid app-container">
+      <div class="row align-items-stretch ">
+        
+        <div class="col-md-6 d-flex justify-content-center align-items-center">
+          <div class="card">
+            <h2 class="text">Get Started Now</h2>
             <form onSubmit={handleSubmit}>
-              <div className="mb-3">
-                <label className="form-label">Username</label>
+              <div class="mb-3">
+                <label class="form-label">Username</label>
                 <input
                   type="text"
                   id="username"
-                  className="form-control"
+                  class="form-control"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
                 />
               </div>
               
-              <div className="mb-3">
-                <label className="form-label">Email</label>
+              <div class="mb-3">
+                <label class="form-label">Email</label>
                 <input
                   type="email"
                   id="email"
-                  className="form-control"
+                  class="form-control"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </div>
 
-              <div className="mb-3">
-                <label className="form-label">Password</label>
+              <div class="mb-3">
+                <label class="form-label">Password</label>
                 <input
                   type="password"
                   id="password"
-                  className="form-control"
+                  class="form-control"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               </div>
 
-              <div className="mb-3">
-                <label className="form-label">Confirm Password</label>
+              <div class="mb-3">
+                <label class="form-label">Confirm Password</label>
                 <input
                   type="password"
                   id="confirmPassword"
-                  className="form-control"
+                  class="form-control"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                 />
               </div>
 
-              <div className="grecaptcha-badge">
+              <div class="grecaptcha-badge">
                 <ReCAPTCHA
                   sitekey="6Lcak9wqAAAAABuhNvb8rOd5PDqozXUwr3xmaiap"
                   onChange={handleCaptchaChange}
                 />
               </div>
 
-              {errorMessage && <p className="text-danger text-center">{errorMessage}</p>}
+              {errorMessage && <p class="text-danger text-center">{errorMessage}</p>}
 
-              <button className="custom-btn">Sign Up</button>
+              <button class="custom-btn">Sign Up</button>
             </form>
           </div>
         </div>
+         
+        <RightBg></RightBg>
 
-        <div className="col-md-6 bg-section d-flex flex-column">
-          <img src="insurance.svg" alt="no image" className="img" />
-          <div className="card-body text-center">
-            <h3 className="mt-2">Confirm API endpoints, methods, and integrations are functioning as expected.</h3>
-          </div>
-        </div>
       </div>
     </div>
   );

@@ -158,7 +158,7 @@ const TestCase = () => {
                           />
                         </div>
                       ))}
-                      <button onClick={() => addQueryParam(index)} className="btn-query btn-sm fs-7">
+                      <button onClick={() => addQueryParam(index)} className="btn-query fs-7">
                         Add Query Param
                       </button>
                     </td>

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import ReCAPTCHA from "react-google-recaptcha";
 import axios from 'axios';
 import "@/styles/Login.css"
+import RightBg from '../components/RightBg';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -81,12 +82,12 @@ const Login = () => {
               <button className="custom-btn" disabled={!captchaVerified}>Login</button>
             </form>
 
-            <div className="d-flex justify-content-between mt-3">
+            <div className="d-flex justify-content-between align-items-center mt-3">
               <Link to="/forgot-password" className="text-decoration-none text-primary">
                 Forgot Password?
               </Link>
-              <div className="mb-3">
-                <label className="form-label">Don't have an Account? </label>
+              <div>
+                <span className="form-label">Don't have an account? </span>
                 <Link to="/signup" className="text-decoration-none text-primary">
                   Sign Up
                 </Link>
@@ -95,12 +96,8 @@ const Login = () => {
           </div>
         </div>
 
-        <div className="col-md-6 bg-section d-flex flex-column">
-          <img src="insurance.svg" alt="no image" className="img" />
-          <div className="card-body text-center">
-            <h3 className="mt-2">Confirm API endpoints, methods, and integrations are functioning as expected.</h3>
-          </div>
-        </div>
+        <RightBg></RightBg>
+
       </div>
     </div>
   );
