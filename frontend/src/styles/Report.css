@@ -1,0 +1,213 @@
+@import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  background-color: #F8FAFC;
+}
+
+.content {
+  background-color: #fff;
+  border-left: 1px solid #E2E8F0;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.btn:hover {
+  background-color: rgb(8, 103, 75);
+  color: white;
+}
+
+.testcase-table {
+  border: 1px solid #e2e8f0;
+  width: 100%;
+  max-width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 5px;
+  overflow: hidden;
+  font-size: small;
+}
+
+.btn-query {
+  background-color: #027f31;
+  color: white;
+  border-radius: 5px;
+  width: 1.5in;
+}
+
+.create-button {
+  background-color: #027f31;
+  border-color: #218838;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  height: auto;
+  min-height: 2.5rem;
+  width: 2in;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.create-button:hover {
+  background-color: #218838;
+  border-color: #1e7e34;
+  transform: scale(1.05);
+}
+
+.testcase-table th {
+  background-color: #f8fafc;
+  color: #1e293b;
+  font-weight: normal;
+  padding: 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.testcase-container {
+  background-color: #F8FAFC;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.query-param-column {
+  width: 300px;
+}
+
+.body-column {
+  width: 300px;
+}
+
+.rounded-table {
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.table.table-borderless th,
+.table.table-borderless td {
+  border: none !important;
+}
+
+.table.table-borderless {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.fs-7 {
+  font-size: 0.875rem;
+}
+
+.content .first-row {
+  background-color: #F8FAFC;
+  padding: 0;
+  border-radius: 8px 8px 0 0;
+}
+
+@media (max-width: 768px) {
+  .create-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    min-height: 2rem;
+    width: 1.5in;
+  }
+}
+
+@media (max-width: 480px) {
+  .create-button {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+    min-height: 1.75rem;
+    width: 1in;
+  }
+
+  .container {
+    flex-direction: column;
+  }
+}
+
+/* Metric Box Styles */
+.metric-box {
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 2px solid transparent; /* Add border */
+}
+
+.metric-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.metric-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+/* Background Colors */
+.bg-light-blue {
+  background-color: #e3f2fd; /* Light Blue */
+  border-color: #90caf9; /* Darker shade of light blue for border */
+}
+
+.bg-light-green {
+  background-color: #e8f5e9; /* Light Green */
+  border-color: #a5d6a7; /* Darker shade of light green for border */
+}
+
+.bg-light-pink {
+  background-color: #fce4ec; /* Light Pink */
+  border-color: #f48fb1; /* Darker shade of light pink for border */
+}
+
+/* Text Colors */
+.text-dark-blue {
+  color: #1976d2; /* Dark blue text */
+}
+
+.text-dark-green {
+  color: #2e7d32; /* Dark green text */
+}
+
+.text-dark-pink {
+  color: #c2185b; /* Dark pink text */
+}
+
+/* Custom width for metric boxes */
+.metric-box-container {
+  flex: 0 0 30%; /* Each box takes 30% of the row width */
+  max-width: 30%; /* Limit the maximum width */
+  margin: 0 1.5%; /* Add some margin between boxes */
+}
+
+/* Custom Green Button */
+.btn-custom-green {
+  background-color: #027f31; /* Custom green color */
+  border-color: #027f31; /* Match border color */
+  color: white; /* White text */
+}
+
+.btn-custom-green:hover {
+  background-color: #026628; /* Darker green on hover */
+  border-color: #026628; /* Match border color on hover */
+}
