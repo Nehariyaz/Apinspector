@@ -14,5 +14,41 @@
     display: flex;
     flex-direction: row;
     width: 100%;
-    margin:10px;
+    margin: 10px;
+}
+
+/* Style for dropdown select */
+.user-dropdown {
+    background-color: transparent;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Hover effect */
+.user-dropdown:hover,
+.user-dropdown:focus {
+    background-color: #eff8f2 !important;
+}
+
+/* Remove default dropdown styling */
+.user-dropdown select {
+    appearance: none;
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    color: #333;
+    cursor: pointer;
+}
+
+/* Style dropdown options */
+.user-dropdown option {
+    background-color: #fff;
+    color: #333;
+    padding: 10px;
+}
+
+/* On hover, change logout option color */
+.user-dropdown option:hover {
+    background-color: #d4edda;
 }
