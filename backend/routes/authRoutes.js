@@ -1,13 +1,14 @@
 const axios= require("axios")
 const express = require("express");
-const { register, login, logout, dashboard } = require("../controllers/authController");
+const { register, login, logout, dashboard, forgotpassword } = require("../controllers/authController");
 const { authenticateToken } = require("../middlewares/authMiddleware");
 
 const router = express.Router();
 
-router.get("/login", (req, res) => res.render("login",{message:null}));
-router.get("/register", (req, res) => res.render("register"));
+// router.get("/login", (req, res) => res.render("login",{message:null}));
+// router.get("/register", (req, res) => res.render("register"));
 router.post("/register", register);
+router.post("/forgot-password",forgotpassword);
 router.post("/login", login);
 router.get("/logout", logout);
 router.get("/dashboard", authenticateToken, dashboard);
@@ -28,6 +29,10 @@ router.post("/api/register", async (req, res) => {
         console.error("Register API Error:", error);
         res.status(500).json({ message: "Server error during registration" });
     }
+});
+
+router.post("/api/forgotpassword", (req,res) => {
+    forgotpassword(req,res);
 });
 
 

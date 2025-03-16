@@ -1,8 +1,8 @@
 const nodemailer = require("nodemailer");
-require("dotenv").config(); // Ensure environment variables are loaded
+require("dotenv").config(); 
 
 const transporter = nodemailer.createTransport({
-    service: "Gmail", // Change if using another provider
+    service: "Gmail", 
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
