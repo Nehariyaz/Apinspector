@@ -1,4 +1,5 @@
 const crypto = require("crypto");
+const { Op } = require("sequelize");
 const axios = require("axios");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -127,9 +128,9 @@ exports.forgotpassword = async (req, res) => {
         await user.save();
         const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
 
-        console.log("Email:", user.email);
-console.log("Username:", user.username);
-console.log("Reset URL:", resetUrl);
+        // console.log("Email:", user.email);
+        // console.log("Username:", user.username);
+        // console.log("Reset URL:", resetUrl);
 
 
         await sendEmail(
@@ -143,6 +144,49 @@ console.log("Reset URL:", resetUrl);
     } catch (err) {
         console.error("Forgot Password Error:", err);
         res.status(500).json({ message: "Something went wrong, please try again later" });
+    }
+};
+
+
+//resetPassword
+exports.resetPassword = async (req, res) => {
+    try {
+        const { token } = req.body;
+        console.log("Token from params:", req.params.token);
+console.log("Full request params:", req.params);
+
+        const { password } = req.body;
+
+        console.log("Password from request:", password);
+        console.log("Token from request:", token);
+
+
+        const user = await User.findOne({
+            where: {
+                resetPasswordToken: { [Op.ne]: null },
+                resetPasswordExpires: { [Op.gt]: Date.now() },
+            },
+        });
+
+        if (!user) {
+            return res.status(400).json({ message: "Invalid or expired token" });
+        }
+
+        const isTokenValid = await bcrypt.compare(token, user.resetPasswordToken);
+        if (!isTokenValid) {
+            return res.status(400).json({ message: "Invalid or expired token" });
+        }
+
+        // Hash new password and update user record
+        user.password = await bcrypt.hash(password, 10);
+        user.resetPasswordToken = null;
+        user.resetPasswordExpires = null;
+        await user.save();
+
+        return res.status(200).json({ message: "Password successfully reset" });
+    } catch (err) {
+        console.error("Reset Password Error:", err);
+        return res.status(500).json({ message: "Something went wrong, please try again later" });
     }
 };
 

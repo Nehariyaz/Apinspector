@@ -1,7 +1,7 @@
 const axios= require("axios")
 const express = require("express");
-const { register, login, logout, dashboard, forgotpassword } = require("../controllers/authController");
-const { authenticateToken } = require("../middlewares/authMiddleware");
+const { register, login, logout, dashboard, forgotpassword, resetPassword  } = require("../controllers/authController");
+const { authenticateToken, validatePassword } = require("../middlewares/authMiddleware");
 
 const router = express.Router();
 
@@ -9,6 +9,7 @@ const router = express.Router();
 // router.get("/register", (req, res) => res.render("register"));
 router.post("/register", register);
 router.post("/forgot-password",forgotpassword);
+router.post("/reset-password/:token", validatePassword, resetPassword);
 router.post("/login", login);
 router.get("/logout", logout);
 router.get("/dashboard", authenticateToken, dashboard);
@@ -33,6 +34,12 @@ router.post("/api/register", async (req, res) => {
 
 router.post("/api/forgotpassword", (req,res) => {
     forgotpassword(req,res);
+});
+
+
+
+router.post("/api/reset-password", (req, res) => {
+    resetPassword(req, res);
 });
 
 

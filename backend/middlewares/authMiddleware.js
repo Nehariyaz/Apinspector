@@ -42,25 +42,18 @@ const authenticateToken = async (req, res, next) => {
     }
 };
 
-module.exports = { authenticateToken };
+const validatePassword = (req, res, next) => {
+    if (!req.body || typeof req.body.password !== "string") {
+        return res.status(400).json({ message: "Password is required." });
+    }
 
-    // if (!token) {
-    //     if (req.headers["content-type"] === "application/json") {
-    //         return res.status(401).json({ message: "Access Denied" });
-    //     }
-    //     return res.redirect("/login");
-    // }
+    if (req.body.password.length < 6) {
+        return res.status(400).json({ message: "Password must be at least 6 characters long." });
+    }
 
-    // jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    //     if (err) {
-    //         if (req.headers["content-type"] === "application/json") {
-    //             return res.status(403).json({ message: "Invalid Token" });
-    //         }
-    //         return res.redirect("/login");
-    //     }
-    //     req.user = user;
-    //     next();
-    // });
-//};
+    next();
+};
 
-//module.exports = { authenticateToken };
+module.exports = { authenticateToken, validatePassword };
+
+    
