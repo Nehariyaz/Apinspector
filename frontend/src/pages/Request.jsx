@@ -5,11 +5,41 @@ import "@/styles/Request.css";
 import VerticalNavbar from "../components/VerticalNavbar";
 import HorizontalNavbar from "../components/HorizontalNavbar"; 
 
+
 const Request = () => {
-  const [method, setMethod] = useState("POST");
-  const [url, setUrl] = useState("localhost:3000");
-  const [contentType, setContentType] = useState("JSON");
-  const [inputCode, setInputCode] = useState('{\n  "name": "Rahul"\n}');
+  const [method, setMethod] = useState(""); 
+  const [url, setUrl] = useState("");  
+  const [contentType, setContentType] = useState("application/json");
+  const [inputCode, setInputCode] = useState("");  
+  const [response, setResponse] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleSendRequest = async () => {
+    console.log("Helllooo");
+    if (!method || !url) {
+      alert("Please select a method and enter a URL.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const requestData = contentType === "application/json" && inputCode ? JSON.parse(inputCode) : inputCode;
+
+      const res = await axios({
+        method,
+        url,
+        headers: { "Content-Type": contentType },
+        data: method !== "GET" && inputCode ? requestData : null,
+      });
+
+      setResponse(res.data);
+    } catch (error) {
+      setResponse(error.response ? error.response.data : "Error sending request");
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   return (
     <div className="d-flex flex-column">
@@ -26,7 +56,7 @@ const Request = () => {
                 Save
               </button>
             </div>
-            <button className="send btn d-flex align-items-center gap-2">
+            <button className="send btn d-flex align-items-center gap-2" onClick={handleSendRequest} disabled={loading}>
               <Play size={16} />
               Send
             </button>

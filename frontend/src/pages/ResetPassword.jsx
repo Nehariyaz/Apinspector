@@ -17,6 +17,13 @@ const ResetPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    console.log("hellooooo");
+    console.log("Token before sending request:", token);
+      
+    if (!token) {
+      setError("Invalid or missing token."); // Ensure token is present
+      return;
+    }
 
     if (password !== confirmPassword) {
       setError("Passwords do not match!");
@@ -25,13 +32,15 @@ const ResetPassword = () => {
 
     try {
       setLoading(true);
+      console.log("Token before sending request:", token);
       const response = await axios.post(
-        "https://your-backend.com/api/reset-password",
-        { token, password }
+        "http://localhost:3000/api/reset-password",
+        { token, password },
+        { headers: { "Content-Type": "application/json" } }
       );
 
       alert(response.data.message);
-      navigate("/login");
+      navigate("/");
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong.");
     } finally {
