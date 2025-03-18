@@ -24,8 +24,8 @@ const Request = () => {
     setLoading(true);
     try {
       const requestData = contentType === "application/json" && inputCode ? JSON.parse(inputCode) : inputCode;
-
-      const res = await axios({
+      console.log("Sending request with:", { method, url});
+      const res = await axios.post({
         method,
         url,
         headers: { "Content-Type": contentType },

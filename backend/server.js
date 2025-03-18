@@ -11,8 +11,6 @@ const SequelizeStore = require("connect-session-sequelize")(session.Store);
 dotenv.config();
 
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 app.use(cors({ 
     origin: process.env.FRONTEND_URL, 
@@ -22,8 +20,9 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
+//app.use(requestMiddleware);
 app.use("/", authRoutes);
+
 
 const sessionStore = new SequelizeStore({ db: sequelize });
 
@@ -52,3 +51,4 @@ app.use(session({
   saveUninitialized: false,
   store: sessionStore,
 }));
+

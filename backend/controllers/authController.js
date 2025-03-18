@@ -1,3 +1,4 @@
+const otpGenerator = require("otp-generator");
 const crypto = require("crypto");
 const { Op } = require("sequelize");
 const axios = require("axios");
@@ -69,11 +70,12 @@ exports.register = async (req, res) => {
     }
 };
 
+
 // User Login
 exports.login = async (req, res) => {
     try {
         const { email, password, captchaToken } = req.body;
-        //console.log(captchaToken)
+        console.log(email,password,captchaToken);
         if (!captchaToken || !(await verifyCaptcha(captchaToken))) {
             //console.log("Login captcha failed")
             return res.status(403).json({ message: "reCAPTCHA failed, please try again" });
@@ -104,6 +106,7 @@ exports.login = async (req, res) => {
         res.status(500).json({ message: "Login error" });
     }
 };
+
 
 
 //Forgot Password

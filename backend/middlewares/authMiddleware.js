@@ -10,11 +10,10 @@ const authenticateToken = async (req, res, next) => {
     }
         
     try {
-        // Verify reCAPTCHA with Google API
         const captchaVerifyURL = `https://www.google.com/recaptcha/api/siteverify`;
         const response = await axios.post(captchaVerifyURL, null, {
             params: {
-                secret: process.env.RECAPTCHA_SECRET_KEY, // Secret key from .env
+                secret: process.env.RECAPTCHA_SECRET_KEY, 
                 response: captchaToken,
             },
         });
