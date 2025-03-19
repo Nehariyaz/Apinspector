@@ -13,7 +13,6 @@ const Report = () => {
   const [testsPassed, setTestsPassed] = useState(125); // Dynamic tests passed
   const [testsFailed, setTestsFailed] = useState(35); // Dynamic tests failed
 
-  // Simulate fetching data (e.g., from an API)
   useEffect(() => {
     // Replace this with actual API call or data fetching logic
     const fetchData = async () => {
