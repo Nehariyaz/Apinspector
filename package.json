@@ -9,6 +9,7 @@
   },
   "devDependencies": {
     "@aws-amplify/cli": "^12.14.4",
-    "rollup": "^4.35.0"
+    "rollup": "^4.35.0",
+    "supertest": "^7.0.0"
   }
 }

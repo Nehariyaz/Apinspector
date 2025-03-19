@@ -2,7 +2,6 @@ console.log("database.js is being loaded...");
 const { Sequelize } = require("sequelize");
 require("dotenv").config();
 
-
 const sequelize = new Sequelize(
     process.env.DB_NAME,      
     process.env.DB_USER,      
@@ -10,10 +9,13 @@ const sequelize = new Sequelize(
     {
         host: process.env.DB_HOST,     
         port: process.env.DB_PORT,     
-        dialect: "postgres",           
-        
+        dialect: process.env.DB_DIALECT,    
+        logging: false,                
     }
 );
 
+sequelize.authenticate()
+    .then(() => console.log("Database connected successfully."))
+    .catch(err => console.error("Error connecting to the database:", err));
 
 module.exports = sequelize;

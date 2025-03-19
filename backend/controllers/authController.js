@@ -1,4 +1,4 @@
-const otpGenerator = require("otp-generator");
+
 const crypto = require("crypto");
 const { Op } = require("sequelize");
 const axios = require("axios");
