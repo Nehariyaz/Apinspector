@@ -39,13 +39,15 @@ install_dependencies_frontend:
 run_tests_backend:
   stage: test
   before_script:
-    - apt-get update && apt-get install -y postgresql-client
-    - echo "Waiting for PostgreSQL..."
-    - until pg_isready -h $DB_HOST -p $DB_PORT; do
-        echo "PostgreSQL is unavailable - sleeping"
-        sleep 1
-      done
-    - echo "PostgreSQL is ready!"
+  - apt-get update && apt-get install -y postgresql-client netcat-traditional
+  - echo "Waiting for PostgreSQL..."
+  - |
+    until pg_isready -h $DB_HOST -p $DB_PORT; do 
+      echo "PostgreSQL is unavailable - sleeping"
+      sleep 1
+    done
+  - echo "PostgreSQL is ready!"
+
 
   script:
     - cd backend
