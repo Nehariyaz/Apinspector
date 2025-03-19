@@ -8,8 +8,8 @@ const sequelize = new Sequelize(
     process.env.DB_PASS,      
     {
         host: process.env.DB_HOST,     
-        port: process.env.DB_PORT,     
-        dialect: process.env.DB_DIALECT,    
+        port: process.env.DB_PORT || 5432,  // Default to PostgreSQL port
+        dialect: process.env.DB_DIALECT || "postgres", // Ensure default dialect
         logging: false,                
     }
 );

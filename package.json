@@ -5,10 +5,12 @@
     "cors": "^2.8.5",
     "express-session": "^1.18.1",
     "lucide-react": "^0.479.0",
+    "rimraf": "^6.0.1",
     "yarn": "^1.22.22"
   },
   "devDependencies": {
     "@aws-amplify/cli": "^12.14.4",
+    "jest": "^29.7.0",
     "rollup": "^4.35.0",
     "supertest": "^7.0.0"
   }
