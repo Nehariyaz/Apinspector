@@ -45,7 +45,7 @@ run_tests_backend:
         echo "PostgreSQL is unavailable - sleeping"
         sleep 1
       done
-    - echo "✅ PostgreSQL is ready!"
+    - echo "PostgreSQL is ready!"
 
   script:
     - cd backend
