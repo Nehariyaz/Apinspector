@@ -45,7 +45,7 @@ run_tests_backend:
         echo "PostgreSQL is unavailable - sleeping"
         sleep 1
       done
-    - echo "✅ PostgreSQL is ready!"
+    - echo "PostgreSQL is ready!"
 
   script:
     - cd backend
@@ -55,4 +55,10 @@ run_tests_backend:
     - main
 
 run_tests_frontend:
-  
+  stage: test
+  script:
+    - cd frontend
+    - npm ci
+    - if npm run | grep -q test; then npm test; else echo "No test script found, skipping..."; fi  
+  only:
+    - main
