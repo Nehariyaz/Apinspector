@@ -1,8 +1,8 @@
 import ReCAPTCHA from "react-google-recaptcha";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate, Link } from "react-router-dom"; // Import Link
 import axios from "axios";
-import "@/styles/Login.css"
+import "@/styles/Login.css";
 import RightBg from '../components/RightBg';
 
 const SignUp = () => {
@@ -12,7 +12,7 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [captchaToken, setCaptchaToken] = useState(null);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const handleCaptchaChange = (token) => {
     console.log("CAPTCHA Token:", token);
@@ -56,87 +56,100 @@ const SignUp = () => {
         setErrorMessage(response.data.message || "Registration failed.");
       }
     } catch (error) {
-        if(response.status==409){
-          setErrorMessage("User already exists");
-        }else{
-          console.error("Signup Error:", error);
-          setErrorMessage("An error occurred. Please try again.");
-        }
+      if (error.response && error.response.status === 409) {
+        setErrorMessage("User already exists.");
+      } else {
+        console.error("Signup Error:", error);
+        setErrorMessage("An error occurred. Please try again.");
       }
+    }
   };
 
   return (
-    <div class="container-fluid app-container">
-      <div class="row align-items-stretch ">
-        
-        <div class="col-md-6 d-flex justify-content-center align-items-center">
-          <div class="card">
-            <h2 class="text">Get Started Now</h2>
+    <div className="container-fluid app-container">
+      <div className="row align-items-stretch">
+        <div className="col-md-6 d-flex justify-content-center align-items-center">
+          <div className="card">
+            <h2 className="text">Get Started Now</h2>
             <form onSubmit={handleSubmit}>
-              <div class="mb-3">
-                <label class="form-label">Username</label>
+              <div className="mb-3">
+                <label className="form-label">Username</label>
                 <input
                   type="text"
                   id="username"
-                  class="form-control"
+                  className="form-control"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
                 />
               </div>
-              
-              <div class="mb-3">
-                <label class="form-label">Email</label>
+
+              <div className="mb-3">
+                <label className="form-label">Email</label>
                 <input
                   type="email"
                   id="email"
-                  class="form-control"
+                  className="form-control"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </div>
 
-              <div class="mb-3">
-                <label class="form-label">Password</label>
+              <div className="mb-3">
+                <label className="form-label">Password</label>
                 <input
                   type="password"
                   id="password"
-                  class="form-control"
+                  className="form-control"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               </div>
 
-              <div class="mb-3">
-                <label class="form-label">Confirm Password</label>
+              <div className="mb-3">
+                <label className="form-label">Confirm Password</label>
                 <input
                   type="password"
                   id="confirmPassword"
-                  class="form-control"
+                  className="form-control"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                 />
               </div>
 
-              <div class="grecaptcha-badge">
+              <div className="grecaptcha-badge">
                 <ReCAPTCHA
                   sitekey="6Lcak9wqAAAAABuhNvb8rOd5PDqozXUwr3xmaiap"
                   onChange={handleCaptchaChange}
                 />
               </div>
 
-              {errorMessage && <p class="text-danger text-center">{errorMessage}</p>}
+              {errorMessage && <p className="text-danger text-center">{errorMessage}</p>}
 
-              <button class="custom-btn">Sign Up</button>
+              <button className="custom-btn">Sign Up</button>
+
+              {/* Add the "Already have an account? Login" text with a link */}
+              <p className="text-center mt-3">
+                Already have an account?{" "}
+                <Link 
+                  to="/login" 
+                  style={{ 
+                    textDecoration: "none", 
+                    fontWeight: "bold", 
+                    color: "rgb(103, 103, 103)" // Grey color
+                  }}
+                >
+                  Login
+                </Link>
+              </p>
             </form>
           </div>
         </div>
-         
-        <RightBg></RightBg>
 
+        <RightBg />
       </div>
     </div>
   );
