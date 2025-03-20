@@ -1,12 +1,20 @@
-const sequelize = require("../config/database");  // ✅ Correct path
+const { Sequelize } = require("sequelize");
+const sequelize = require("../config/database");
+
 const User = require("./User");
+const Request = require("./Request");
 
-sequelize.authenticate()
-    .then(() => console.log("Database connected"))
-    .catch(err => console.error("Database connection failed:", err));
+sequelize.sync()
+  .then(() => console.log("Database synced"))
+  .catch((err) => console.error(" Sync failed:", err));
 
-sequelize.sync({ force: false })
-    .then(() => console.log("Tables synced"))
-    .catch(err => console.error("Sync error:", err));
 
-module.exports = { sequelize, User };  // ✅ Export sequelize
+// Define associations
+User.hasMany(Request, { foreignKey: "userId" });
+Request.belongsTo(User, { foreignKey: "userId" });
+
+module.exports = {
+  sequelize,
+  User,
+  Request,
+};

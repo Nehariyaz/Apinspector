@@ -1,58 +1,22 @@
 const jwt = require("jsonwebtoken");
 
-const authenticateToken = async (req, res, next) => {
-    const authHeader = req.headers["authorization"];
-    const token = req.cookies.token || (authHeader && authHeader.split(" ")[1]);
-    const captchaToken = req.body.captchaToken || req.query.captchaToken;
+const authMiddleware = (req, res, next) => {
+  const authHeader = req.headers.authorization;
 
-    if (!captchaToken) {
-        return res.status(400).json({ message: "CAPTCHA verification failed" });
-    }
-        
-    try {
-        const captchaVerifyURL = `https://www.google.com/recaptcha/api/siteverify`;
-        const response = await axios.post(captchaVerifyURL, null, {
-            params: {
-                secret: process.env.RECAPTCHA_SECRET_KEY, 
-                response: captchaToken,
-            },
-        });
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "Unauthorized - Missing or invalid token" });
+  }
 
-        if (!response.data.success) {
-            return res.status(400).json({ message: "CAPTCHA validation failed" });
-        }
+  const token = authHeader.split(" ")[1];
 
-        // Proceed with token authentication
-        if (!token) {
-            return res.status(401).json({ message: "Access Denied: No Token" });
-        }
-
-        jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-            if (err) {
-                return res.status(403).json({ message: "Invalid Token" });
-            }
-            req.user = user;
-            next();
-        });
-
-    } catch (error) {
-        console.error("Error verifying reCAPTCHA:", error);
-        return res.status(500).json({ message: "Server error during CAPTCHA verification" });
-    }
-};
-
-const validatePassword = (req, res, next) => {
-    if (!req.body || typeof req.body.password !== "string") {
-        return res.status(400).json({ message: "Password is required." });
-    }
-
-    if (req.body.password.length < 6) {
-        return res.status(400).json({ message: "Password must be at least 6 characters long." });
-    }
-
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
     next();
+  } catch (error) {
+    console.error("Token verification failed:", error.message);
+    return res.status(401).json({ error: "Unauthorized - Invalid token" });
+  }
 };
 
-module.exports = { authenticateToken, validatePassword };
-
-    
+module.exports = { authMiddleware };
