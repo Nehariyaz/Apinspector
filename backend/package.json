@@ -3,10 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
-  },
+ "scripts": {
+  "test": "echo \"Error: no test specified\" && exit 1",
+  "start": "node server.js",
+  "db:migrate": "npx sequelize-cli db:migrate --config config/config.js",
+  "db:seed": "npx sequelize-cli db:seed:all --config config/config.js",
+  "db:rollback": "npx sequelize-cli db:migrate:undo --config config/config.js"
+},
+
   "keywords": [],
   "author": "",
   "license": "ISC",
