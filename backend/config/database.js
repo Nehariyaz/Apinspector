@@ -1,6 +1,4 @@
-console.log("database.js is being loaded...");
-
-require("dotenv").config(); // Load environment variables at the very top
+require("dotenv").config({ path: process.env.NODE_ENV === "test" ? ".env.test" : ".env" });
 const { Sequelize } = require("sequelize");
 
 const sequelize = new Sequelize(

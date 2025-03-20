@@ -3,7 +3,6 @@ image: node:20
 services:
   - name: postgres:latest
     alias: postgres
-    command: ["postgres", "-c", "log_statement=all"]
 
 variables:
   POSTGRES_DB: testdb
@@ -14,6 +13,7 @@ variables:
   DB_USER: testuser
   DB_PASS: testpassword
   DB_PORT: 5432
+  NODE_ENV: test
 
 stages:
   - install
@@ -31,7 +31,7 @@ install_dependencies_backend:
 install_dependencies_frontend:
   stage: install
   script:
-    - cd frontend 
+    - cd frontend
     - npm install
   only:
     - main
@@ -42,16 +42,16 @@ run_tests_backend:
     - apt-get update && apt-get install -y postgresql-client netcat-traditional
     - echo "Waiting for PostgreSQL..."
     - |
-      until nc -z $DB_HOST $DB_PORT; do
+      until pg_isready -h $DB_HOST -p $DB_PORT -U $POSTGRES_USER; do
         echo "PostgreSQL is unavailable - sleeping"
-        sleep 1
+        sleep 2
       done
     - echo "✅ PostgreSQL is ready!"
-
-  script:
     - cd backend
     - npm install
-    - npx jest --detectOpenHandles --forceExit   
+    - npx sequelize-cli db:migrate  
+  script:
+    - npx jest --runInBand --detectOpenHandles
   only:
     - main
 
@@ -59,7 +59,14 @@ run_tests_frontend:
   stage: test
   script:
     - cd frontend
-    - npm install 
-    - npm test || echo "No tests available, skipping..."  # Prevents failure if no test script
+    - npm install
+    - npm test || echo "No tests available, skipping..."  
+  only:
+    - main
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying application..."
   only:
     - main
