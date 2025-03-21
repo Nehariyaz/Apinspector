@@ -1,11 +1,12 @@
 const request = require("supertest");
-const app = require("../server");
-const { sequelize } = require("../models");
+require("dotenv").config({ path: ".env.test" });
+const app = require("../../server");
+const { sequelize } = require("../../models");
 
 beforeAll(async () => {
   try {
     console.log("Syncing database...");
-    await sequelize.sync({ force: true }); // Reset test DB
+    await sequelize.sync({ force: true }); 
     console.log("Database synced successfully.");
   } catch (error) {
     console.error("Error syncing database:", error);
@@ -18,7 +19,6 @@ afterAll(async () => {
     await sequelize.close();
     console.log("Database connection closed.");
 
-    // Remove process event listeners to prevent memory leaks
     process.removeAllListeners("uncaughtException");
     process.removeAllListeners("unhandledRejection");
   } catch (error) {
