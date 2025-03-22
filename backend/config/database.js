@@ -19,28 +19,11 @@ const sequelize = new Sequelize(
     }
 );
 
-beforeAll(async () => {
-    try {
-        await sequelize.authenticate();
-        console.log("Connected to test database");
-        await sequelize.sync({ force: true }); // Reset tables for each test run
-    } catch (err) {
-        console.error("Error connecting to test database:", err);
-    }
-});
-
-afterAll(async () => {
-    try {
-        await sequelize.close();
-        console.log("Database connection closed after tests");
-    } catch (err) {
-        console.error("Error closing database connection:", err);
-    }
-});
-
-test("Database connection should be established", async () => {
-    expect(sequelize).toBeDefined();
-    await expect(sequelize.authenticate()).resolves.not.toThrow();
-});
+sequelize.authenticate()
+    .then(() => console.log("✅ Database connected successfully."))
+    .catch(err => {
+        console.error("❌ Error connecting to the database:", err.message);
+        console.error(err.stack); // More detailed error stack
+    });
 
 module.exports = sequelize;
