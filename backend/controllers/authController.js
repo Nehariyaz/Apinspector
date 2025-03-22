@@ -97,7 +97,8 @@ exports.login = async (req, res) => {
         }
         const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-        await sendEmail(user.email, "Login Alert", user.username, "You have successfully logged in.");
+        await sendEmail(user.email, "Welcome to API Inspector", `Hello ${user.username},
+You have successfully logged in to API Inspector. 🎉\n\n\n🔍 With API Inspector, you can:\n\nCreate and manage test cases with ease\nSend and analyze API requests in real-time\nReview detailed reports for efficient testing\n\nIf you did not initiate this login, please reset your password or contact our support team.\n\nThank you for choosing API Inspector!\nHappy testing! 🚀`);
 
         return res.status(200).json({ message: "Login successful", token });
 
