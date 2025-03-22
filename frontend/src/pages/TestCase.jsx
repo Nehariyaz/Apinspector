@@ -1,198 +1,330 @@
-import React, { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css'; 
+import React, { useState, useEffect } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import "@/styles/TestCase.css";
 import "@/styles/VerticalNavbar.css";
 import "@/styles/HorizontalNavbar.css";
 import VerticalNavbar from "../components/VerticalNavbar";
-import HorizontalNavbar from "../components/HorizontalNavbar"; 
+import HorizontalNavbar from "../components/HorizontalNavbar";
 
 const TestCase = () => {
-  const [testCases, setTestCases] = useState([
-    {
+  const [testCases, setTestCases] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [newTestCase, setNewTestCase] = useState({
+    name: '',
+    method: 'GET',
+    url: '',
+    queryParams: [{ key: '', value: '', description: '' }],
+    body: '',
+  });
+
+  // Debug logging
+  useEffect(() => {
+    console.log("Current test cases:", testCases);
+  }, [testCases]);
+
+  // Open the modal
+  const openModal = () => {
+    setShowModal(true);
+  };
+
+  // Close the modal
+  const closeModal = () => {
+    setShowModal(false);
+    // Reset the form
+    setNewTestCase({
       name: '',
       method: 'GET',
       url: '',
       queryParams: [{ key: '', value: '', description: '' }],
       body: '',
-    },
-  ]);
-
-  const addNewRow = () => {
-    setTestCases([
-      ...testCases,
-      {
-        name: '',
-        method: 'GET',
-        url: '',
-        queryParams: [{ key: '', value: '', description: '' }],
-        body: '',
-      },
-    ]);
+    });
   };
 
-  const handleInputChange = (index, field, value) => {
-    const updatedTestCases = [...testCases];
-    updatedTestCases[index][field] = value;
-    setTestCases(updatedTestCases);
+  // Handle input changes in the modal form
+  const handleInputChange = (field, value) => {
+    setNewTestCase({ ...newTestCase, [field]: value });
   };
 
-  const handleQueryParamChange = (index, paramIndex, field, value) => {
-    const updatedTestCases = [...testCases];
-    updatedTestCases[index].queryParams[paramIndex][field] = value;
-    setTestCases(updatedTestCases);
+  // Handle query parameter changes
+  const handleQueryParamChange = (paramIndex, field, value) => {
+    const updatedQueryParams = [...newTestCase.queryParams];
+    updatedQueryParams[paramIndex][field] = value;
+    setNewTestCase({ ...newTestCase, queryParams: updatedQueryParams });
   };
 
-  const addQueryParam = (index) => {
-    const updatedTestCases = [...testCases];
-    updatedTestCases[index].queryParams.push({ key: '', value: '', description: '' });
-    setTestCases(updatedTestCases);
+  // Add a new query parameter field
+  const addQueryParam = () => {
+    setNewTestCase({
+      ...newTestCase,
+      queryParams: [...newTestCase.queryParams, { key: '', value: '', description: '' }],
+    });
   };
 
-  const saveTestCase = (index) => {
-    console.log('Saved test case:', testCases[index]);
+  // Remove a query parameter field
+  const removeQueryParam = (paramIndex) => {
+    if (newTestCase.queryParams.length > 1) {
+      const updatedQueryParams = newTestCase.queryParams.filter((_, index) => index !== paramIndex);
+      setNewTestCase({ ...newTestCase, queryParams: updatedQueryParams });
+    }
   };
 
-  const deleteTestCase = (index) => {
-    const updatedTestCases = testCases.filter((_, i) => i !== index);
-    setTestCases(updatedTestCases);
+  // Save the new test case
+  const saveTestCase = () => {
+    // Basic validation
+    if (!newTestCase.name.trim()) {
+      alert("Please enter a test case name");
+      return;
+    }
+
+    // Add timestamp for unique identification
+    const testCaseWithId = {
+      ...newTestCase,
+      id: Date.now(),
+      createdAt: new Date().toLocaleString()
+    };
+    
+    console.log("Saving test case:", testCaseWithId); // Debug log
+    setTestCases([...testCases, testCaseWithId]);
+    closeModal();
+  };
+
+  // Send a test case
+  const sendTestCase = (index) => {
+    console.log('Sending test case:', testCases[index]);
+    // Add visual feedback here in a real app
+  };
+
+  // Get appropriate method badge color
+  const getMethodColor = (method) => {
+    switch (method) {
+      case 'GET': return 'method-get';
+      case 'POST': return 'method-post';
+      case 'PUT': return 'method-put';
+      case 'DELETE': return 'method-delete';
+      default: return 'method-get';
+    }
   };
 
   return (
-    <div className="d-flex flex-column">
+    <div className="d-flex flex-column app-container">
       <HorizontalNavbar />
       <div className="d-flex">
         <VerticalNavbar />
-        <div className="testcase-container container-fluid p-4">
-          <button onClick={addNewRow} className="btn mb-4 create-button">
-            Create Testcase+
-          </button>
+        <div className="testcase-container container-fluid">
+          <div className="header-section d-flex justify-content-between align-items-center">
+            <div>
+              {/* Removed the "API Test Cases" heading */}
+            </div>
+            <div className="d-flex gap-2">
+              <button onClick={openModal} className="create-button">
+                Create Test Case
+              </button>
+              {/* Removed the "Debug: Add Sample" button */}
+            </div>
+          </div>
 
-          <div className="table-responsive rounded-table">
-            <table className="table table-borderless">
-              <thead className="thead-light">
-                <tr>
-                  <th className="p-3 text-secondary fw-normal" rowSpan={2}>
-                    Name
-                  </th>
-                  <th className="p-3 text-secondary fw-normal" rowSpan={2}>
-                    Method &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; URL
-                  </th>
-                  <th className="p-3 text-secondary fw-normal" style={{ width: '300px' }} rowSpan={2}>
-                    Query Parameters
-                  </th>
-                  <th className="p-3 text-secondary fw-normal" style={{ width: '300px' }} rowSpan={2}>
-                    Body
-                  </th>
-                  <th className="p-3 text-secondary fw-normal" rowSpan={2}>
-                    Actions
-                  </th>
-                </tr>
-                <tr></tr>
-              </thead>
-              <tbody>
-                {testCases.map((testCase, index) => (
-                  <tr key={index}>
-                    <td>
-                      <input
-                        type="text"
-                        className="form-control fs-7"
-                        value={testCase.name}
-                        onChange={(e) => handleInputChange(index, 'name', e.target.value)}
-                      />
-                    </td>
-                    
+          {/* Empty state when no test cases */}
+          {testCases.length === 0 && (
+            <div className="empty-state">
+              <div className="empty-icon">📋</div>
+              <h3>No test cases yet</h3>
+              <p>Create your first test case to get started!</p>
+              <button onClick={openModal} className="btn btn-primary">Create Now</button>
+            </div>
+          )}
 
-                    <td>
-                      <div className="d-flex align-items-center gap-0">
-                        <select
-                          className="form-select fs-7"
-                          style={{ width: '100px', borderRadius: '4px 0 0 4px' }}
-                          value={testCase.method}
-                          onChange={(e) => handleInputChange(index, 'method', e.target.value)}
-                        >
-                          <option value="GET">GET</option>
-                          <option value="POST">POST</option>
-                          <option value="PUT">PUT</option>
-                          <option value="DELETE">DELETE</option>
-                        </select>
-                        <input
-                          type="text"
-                          className="form-control fs-7"
-                          style={{ borderRadius: '0 4px 4px 0', flex: 1 }}
-                          value={testCase.url}
-                          onChange={(e) => handleInputChange(index, 'url', e.target.value)}
-                          placeholder="https://example.com/api"
-                        />
-                      </div>
-                    </td>
+          {/* Display saved test cases in a table */}
+          {testCases.length > 0 && (
+            <div className="rounded-table">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Method</th>
+                    <th>URL</th>
+                    <th>Query Parameters</th>
+                    <th>Body</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {testCases.map((testCase, index) => (
+                    <tr key={testCase.id || index} className="table-row">
+                      <td className="name-cell">
+                        {testCase.name || <span className="text-muted">Unnamed</span>}
+                      </td>
+                      <td className="method-cell">
+                        <span className={`method-badge ${getMethodColor(testCase.method)}`}>
+                          {testCase.method}
+                        </span>
+                      </td>
+                      <td className="url-cell">
+                        {testCase.url ? 
+                          <span title={testCase.url}>{testCase.url}</span> : 
+                          <span className="text-muted">No URL</span>
+                        }
+                      </td>
+                      <td className="params-cell">
+                        {testCase.queryParams && testCase.queryParams.length > 0 && 
+                         testCase.queryParams.some(param => param.key || param.value) ? (
+                          <div className="param-container">
+                            {testCase.queryParams.map((param, paramIndex) => (
+                              param.key || param.value ? (
+                                <div key={paramIndex} className="param-item">
+                                  {param.key && <span className="param-key">{param.key}</span>}
+                                  {param.value && <span className="param-value">{param.value}</span>}
+                                </div>
+                              ) : null
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="text-muted">No parameters</span>
+                        )}
+                      </td>
+                      <td className="body-cell">
+                        {testCase.body ? (
+                          <span className="body-preview">{testCase.body.substring(0, 20)}...</span>
+                        ) : (
+                          <span className="text-muted">Empty</span>
+                        )}
+                      </td>
+                      <td className="actions-cell">
+                        <div className="d-flex gap-2">
+                          <button
+                            className="btn btn-danger btn-sm"
+                            onClick={() => setTestCases(testCases.filter((_, i) => i !== index))}
+                          >
+                            Delete
+                          </button>
+                          <button
+                            className="btn btn-secondary btn-sm"
+                            onClick={() => sendTestCase(index)}
+                          >
+                            Send
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
 
-                    <td style={{ width: '300px' }}>
-                      {testCase.queryParams.map((param, paramIndex) => (
-                        <div key={paramIndex} className="mb-2">
+          {/* Modal for creating a new test case */}
+          {showModal && (
+            <div className="modal-backdrop">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">
+                    <span className="modal-icon"></span> Create New Test Case
+                  </h5>
+                  <button type="button" className="close" onClick={closeModal}>
+                    <span>&times;</span>
+                  </button>
+                </div>
+                <div className="modal-body">
+                  <div className="form-group">
+                    <label>Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={newTestCase.name}
+                      onChange={(e) => handleInputChange('name', e.target.value)}
+                      placeholder="My awesome API test"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Method</label>
+                    <select
+                      className="form-control"
+                      value={newTestCase.method}
+                      onChange={(e) => handleInputChange('method', e.target.value)}
+                    >
+                      <option value="GET">GET</option>
+                      <option value="POST">POST</option>
+                      <option value="PUT">PUT</option>
+                      <option value="DELETE">DELETE</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label>URL</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={newTestCase.url}
+                      onChange={(e) => handleInputChange('url', e.target.value)}
+                      placeholder="https://example.com/api"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Query Parameters</label>
+                    <div className="query-params-container">
+                      {newTestCase.queryParams.map((param, paramIndex) => (
+                        <div key={paramIndex} className="param-form-group">
+                          <div className="param-header">
+                            <span className="param-number">Parameter {paramIndex + 1}</span>
+                            {newTestCase.queryParams.length > 1 && (
+                              <button 
+                                className="remove-param-btn" 
+                                onClick={() => removeQueryParam(paramIndex)}
+                                title="Remove parameter"
+                              >
+                                &times;
+                              </button>
+                            )}
+                          </div>
                           <input
                             type="text"
-                            className="form-control mb-1 fs-7"
+                            className="form-control mb-1"
                             placeholder="Key"
                             value={param.key}
-                            onChange={(e) =>
-                              handleQueryParamChange(index, paramIndex, 'key', e.target.value)
-                            }
+                            onChange={(e) => handleQueryParamChange(paramIndex, 'key', e.target.value)}
                           />
                           <input
                             type="text"
-                            className="form-control mb-1 fs-7"
+                            className="form-control mb-1"
                             placeholder="Value"
                             value={param.value}
-                            onChange={(e) =>
-                              handleQueryParamChange(index, paramIndex, 'value', e.target.value)
-                            }
+                            onChange={(e) => handleQueryParamChange(paramIndex, 'value', e.target.value)}
                           />
                           <input
                             type="text"
-                            className="form-control mb-1 fs-7"
-                            placeholder="Description"
+                            className="form-control mb-1"
+                            placeholder="Description (optional)"
                             value={param.description}
-                            onChange={(e) =>
-                              handleQueryParamChange(index, paramIndex, 'description', e.target.value)
-                            }
+                            onChange={(e) => handleQueryParamChange(paramIndex, 'description', e.target.value)}
                           />
                         </div>
                       ))}
-                      <button onClick={() => addQueryParam(index)} className="btn-query fs-7">
-                        Add Query Param
-                      </button>
-                    </td>
-
-                    <td style={{ width: '300px' }}>
-                      <textarea
-                        className="form-control fs-7"
-                        value={testCase.body}
-                        onChange={(e) => handleInputChange(index, 'body', e.target.value)}
-                        placeholder="Enter JSON data"
-                      />
-                    </td>
-
-                    <td>
-                      <div className="d-flex flex-wrap gap-2">
-                        <button
-                          onClick={() => saveTestCase(index)}
-                          className="btn btn-success btn-sm fs-7"
-                        >
-                          Save
-                        </button>
-                        <button
-                          onClick={() => deleteTestCase(index)}
-                          className="btn btn-danger btn-sm fs-7"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                    </div>
+                    <button onClick={addQueryParam} className="btn btn-secondary btn-sm add-param-btn">
+                      <span>+</span> Add Query Parameter
+                    </button>
+                  </div>
+                  <div className="form-group">
+                    <label>Body</label>
+                    <textarea
+                      className="form-control"
+                      rows="5"
+                      value={newTestCase.body}
+                      onChange={(e) => handleInputChange('body', e.target.value)}
+                      placeholder="Enter JSON data"
+                    />
+                  </div>
+                </div>
+                <div className="modal-footer">
+                  <button className="btn btn-secondary" onClick={closeModal}>
+                    Cancel
+                  </button>
+                  <button className="btn btn-primary" onClick={saveTestCase}>
+                    Save Test Case
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
