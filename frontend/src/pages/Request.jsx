@@ -14,6 +14,7 @@ const Request = () => {
   const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
   const [queryParams, setQueryParams] = useState([{ key: '', value: '', description: '' }]);
+  const [requestName, setRequestName] = useState(""); // New state for request name
 
   const handleSendRequest = async () => {
     if (!method || !url) {
@@ -68,6 +69,14 @@ const Request = () => {
             <div className="left-container">
               <div className="top-bar">
                 <div className="left-buttons">
+                  {/* New input field for request name */}
+                  <input
+                    type="text"
+                    className="form-control request-name-input"
+                    placeholder="Enter request name"
+                    value={requestName}
+                    onChange={(e) => setRequestName(e.target.value)}
+                  />
                   <button className="save btn d-flex align-items-center gap-2">
                     <Save size={16} />
                     Save
