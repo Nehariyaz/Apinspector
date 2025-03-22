@@ -8,7 +8,7 @@ variables:
   POSTGRES_DB: testdb
   POSTGRES_USER: testuser
   POSTGRES_PASSWORD: testpassword
-  DB_HOST: postgres  # Matches the alias
+  DB_HOST: postgres
   DB_NAME: testdb
   DB_USER: testuser
   DB_PASS: testpassword
@@ -46,7 +46,7 @@ run_tests_backend:
         echo "PostgreSQL is unavailable - sleeping"
         sleep 2
       done
-    - echo "✅ PostgreSQL is ready!"
+    - echo "PostgreSQL is ready!"
     - cd backend
     - npm install
     - npx sequelize-cli db:migrate  
