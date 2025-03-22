@@ -33,7 +33,7 @@ const Login = () => {
       console.log("Login successful! Redirecting...");
       localStorage.setItem("token", response.data.token);
       alert(response.data.message); 
-      navigate('/request');  
+      navigate('/otp-verification');  
     } catch (error) {
       setErrorMessage(error.response?.data?.message || "Login failed!");
     }
@@ -78,7 +78,6 @@ const Login = () => {
               </div>
 
               {errorMessage && <p className="text-danger text-center">{errorMessage}</p>}
-            
               <button className="custom-btn" disabled={!captchaVerified}>Login</button>
             </form>
 
@@ -87,7 +86,7 @@ const Login = () => {
                 Forgot Password?
               </Link>
               <div>
-                <span className="form-label">Don't have an account? </span>
+                <span className="text-muted">Don't have an account? </span>
                 <Link to="/signup" className="text-decoration-none text-primary">
                   Sign Up
                 </Link>

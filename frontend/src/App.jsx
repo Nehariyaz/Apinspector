@@ -8,6 +8,7 @@ import Request from './pages/Request';
 import Report from './pages/Report';
 import Assertion from './pages/Assertion';
 import ResetPassword from './pages/ResetPassword'; 
+import OtpVerification from './pages/OtpVerification'; // Import OTP Page
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/request" element={<Request />} />
         <Route path="/assertion" element={<Assertion />} />
         <Route path="/report" element={<Report />} />
+        <Route path="/otp-verification" element={<OtpVerification />} /> 
       </Routes>
     </Router>
   );
