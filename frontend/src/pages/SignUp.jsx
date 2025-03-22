@@ -128,23 +128,13 @@ const SignUp = () => {
               </div>
 
               {errorMessage && <p className="text-danger text-center">{errorMessage}</p>}
-
               <button className="custom-btn">Sign Up</button>
-
-              {/* Add the "Already have an account? Login" text with a link */}
-              <p className="text-center mt-3">
-                Already have an account?{" "}
-                <Link 
-                  to="/login" 
-                  style={{ 
-                    textDecoration: "none", 
-                    fontWeight: "bold", 
-                    color: "rgb(103, 103, 103)" // Grey color
-                  }}
-                >
-                  Login
-                </Link>
-              </p>
+              <div className="text-center mt-3">
+              <span className="text-muted">Already have an account? </span>
+              <Link to="/login" className="text-decoration-none text-primary">
+                Login
+              </Link>
+              </div>
             </form>
           </div>
         </div>
