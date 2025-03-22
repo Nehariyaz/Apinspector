@@ -1,13 +1,14 @@
-// Load environment variables from .env.test
-require('dotenv').config({ path: './.env.test' });
-const { sequelize } = require("../models");
+const { sequelize, connectDB } = require("../config/database");  // Adjust path if needed
 
-module.exports = async () => {
-  try {
-    console.log("Syncing test database...");
-    await sequelize.sync({ force: true }); // Reset DB before running tests
-    console.log("Test database synced successfully.");
-  } catch (error) {
-    console.error("Error syncing test database:", error);
-  }
-};
+beforeAll(async () => {
+    console.log("Setting up test database...");
+    await connectDB();  // Ensure database connection before tests
+    await sequelize.sync({ force: true }); // Reset database before each test
+    console.log("Test database synced.");
+});
+
+afterAll(async () => {
+    console.log("Closing test database...");
+    await sequelize.close();  // Properly close the database after tests
+    console.log("Test database connection closed.");
+});
