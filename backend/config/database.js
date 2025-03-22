@@ -19,16 +19,11 @@ const sequelize = new Sequelize(
     }
 );
 
-const connectDB = async () => {
-    try {
-        await sequelize.authenticate();
-        if (process.env.NODE_ENV !== "test") {
-            console.log("Database connected successfully.");
-        }
-    } catch (err) {
+sequelize.authenticate()
+    .then(() => console.log("Database connected successfully."))
+    .catch(err => {
         console.error("Error connecting to the database:", err.message);
-        console.error(err.stack);
-    }
-};
+        console.error(err.stack); // More detailed error stack
+    });
 
-module.exports = { sequelize, connectDB };
+module.exports = sequelize;
