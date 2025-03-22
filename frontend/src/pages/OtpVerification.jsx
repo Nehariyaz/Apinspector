@@ -17,7 +17,7 @@ const OtpVerification = () => {
     if (!isNaN(element.value) && element.value.length <= 1) {
       const newOtp = [...otp];
       newOtp[index] = element.value;
-      setOtp(newOtp);
+      setOtp(newOtp)
       
       if (element.nextSibling && element.value) {
         element.nextSibling.focus();
