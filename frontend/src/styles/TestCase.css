@@ -66,8 +66,11 @@ body {
 
 .table th {
   /* Removed background-color */
+  border-bottom: 2px solid var(--primary-color);
   color: #02420e;
   font-weight: 600;
+  background-color: var(--primary-light);
+  
 }
 
 .table td {
