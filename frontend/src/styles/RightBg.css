@@ -23,6 +23,8 @@
 .right-bg-text {
   max-width: 80%;
   text-align: center;
+  color: black !important;
+  background: transparent !important;
 }
 
 .right-bg-info {
