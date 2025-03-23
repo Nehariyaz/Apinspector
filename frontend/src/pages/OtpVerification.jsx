@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import "@/styles/Login.css"
+import "@/styles/Login.css";
 import RightBg from '../components/RightBg';
 
 const OtpVerification = () => {
@@ -17,7 +17,7 @@ const OtpVerification = () => {
     if (!isNaN(element.value) && element.value.length <= 1) {
       const newOtp = [...otp];
       newOtp[index] = element.value;
-      setOtp(newOtp)
+      setOtp(newOtp);
       
       if (element.nextSibling && element.value) {
         element.nextSibling.focus();
@@ -39,10 +39,7 @@ const OtpVerification = () => {
     const otpValue = otp.join('');
     
     try {
-      const response = await axios.post('http://localhost:3000/api/verify-otp', {
-        email,
-        otp: otpValue,
-      });
+      const response = await axios.post('http://localhost:3000/api/verify-otp', { email, otp: otpValue });
       alert(response.data.message);
       navigate('/dashboard');
     } catch (error) {
@@ -60,11 +57,12 @@ const OtpVerification = () => {
   };
 
   return (
-    <div className="container-fluid app-container">
-      <div className="row align-items-stretch">
-        <div className="col-md-6 d-flex justify-content-center align-items-center">
-           <div className="card">
-            <h2 className="text">Enter OTP sent to your email</h2>
+    <div className="login-container">
+      <div className="login-row">
+        {/* Left Side: Card */}
+        <div className="login-column login-left">
+          <div className="login-card">
+            <h2 className="login-text">Enter OTP sent to your email</h2>
             <form onSubmit={handleSubmit}>
               <div className="otp-input-container">
                 {otp.map((digit, index) => (
@@ -80,19 +78,21 @@ const OtpVerification = () => {
                   />
                 ))}
               </div>
-              {errorMessage && <p className="text-danger text-center">{errorMessage}</p>}
-              <button className="custom-btn" type="submit">Verify OTP</button>
+              {errorMessage && <p className="login-error">{errorMessage}</p>}
+              <button className="login-button" type="submit">Verify OTP</button>
             </form>
-
-            <div className="d-flex justify-content-between align-items-center mt-3">
-              <span className="text-muted">Didn't receive the OTP?</span>
-              <button className="text-primary text-decoration-none border-0 bg-transparent" onClick={handleResendOtp}>Resend OTP</button>
+            <div className="login-links">
+              <span className="login-link-text">Didn't receive the OTP? </span>
+              <button className="login-link login-resend" onClick={handleResendOtp}>Resend OTP</button>
             </div>
-            {resendMessage && <p className="text-danger text-center">{resendMessage}</p>}
+            {resendMessage && <p className="login-error">{resendMessage}</p>}
           </div>
         </div>
 
-        <RightBg></RightBg>
+        {/* Right Side: RightBg */}
+        <div className="login-column login-right">
+          <RightBg />
+        </div>
       </div>
     </div>
   );

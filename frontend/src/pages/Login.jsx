@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; 
 import ReCAPTCHA from "react-google-recaptcha";
 import axios from 'axios';
-import "@/styles/Login.css"
+import "@/styles/Login.css";
 import RightBg from '../components/RightBg';
 
 const Login = () => {
@@ -40,54 +40,55 @@ const Login = () => {
   };
 
   return (
-    <div className="container-fluid app-container">
-      <div className="row align-items-stretch">
-        <div className="col-md-6 d-flex justify-content-center align-items-center">
-          <div className="card">
-            <h2 className="text">Enter Your Credentials to access your account</h2>
+    <div className="login-container">
+      <div className="login-row">
+        {/* Left Side: Card */}
+        <div className="login-column login-left">
+          <div className="login-card">
+            <h2 className="login-text">Enter Your Credentials to access your account</h2>
             <form onSubmit={handleSubmit}>
-              <div className="mb-3">
-                <label className="form-label">Email</label>
+              <div className="login-form-group">
+                <label className="login-form-label">Email</label>
                 <input
                   type="email"
                   id="email"
-                  className="form-control"
+                  className="login-form-input"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </div>
         
-              <div className="mb-3">
-                <label className="form-label">Password</label>
+              <div className="login-form-group">
+                <label className="login-form-label">Password</label>
                 <input
                   type="password"
                   id="password"
-                  className="form-control"
+                  className="login-form-input"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               </div>
 
-              <div className="grecaptcha-badge">
+              <div className="login-recaptcha">
                 <ReCAPTCHA
                   sitekey={siteKey}
                   onChange={handleCaptchaChange}
                 />
               </div>
 
-              {errorMessage && <p className="text-danger text-center">{errorMessage}</p>}
-              <button className="custom-btn" disabled={!captchaVerified}>Login</button>
+              {errorMessage && <p className="login-error">{errorMessage}</p>}
+              <button className="login-button" disabled={!captchaVerified}>Login</button>
             </form>
 
-            <div className="d-flex justify-content-between align-items-center mt-3">
-              <Link to="/forgot-password" className="text-decoration-none text-primary">
+            <div className="login-links">
+              <Link to="/forgot-password" className="login-link">
                 Forgot Password?
               </Link>
               <div>
-                <span className="text-muted">Don't have an account? </span>
-                <Link to="/signup" className="text-decoration-none text-primary">
+                <span className="login-link-text">Don't have an account? </span>
+                <Link to="/signup" className="login-link">
                   Sign Up
                 </Link>
               </div>
@@ -95,8 +96,10 @@ const Login = () => {
           </div>
         </div>
 
-        <RightBg></RightBg>
-
+        {/* Right Side: RightBg */}
+        <div className="login-column login-right">
+          <RightBg />
+        </div>
       </div>
     </div>
   );

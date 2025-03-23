@@ -1,8 +1,8 @@
 import ReCAPTCHA from "react-google-recaptcha";
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom"; // Import Link
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-import "@/styles/Login.css";
+import "@/styles/Login.css"; // We'll reuse Login.css for now
 import RightBg from '../components/RightBg';
 
 const SignUp = () => {
@@ -66,80 +66,84 @@ const SignUp = () => {
   };
 
   return (
-    <div className="container-fluid app-container">
-      <div className="row align-items-stretch">
-        <div className="col-md-6 d-flex justify-content-center align-items-center">
-          <div className="card">
-            <h2 className="text">Get Started Now</h2>
+    <div className="login-container">
+      <div className="login-row">
+        {/* Left Side: Card */}
+        <div className="login-column login-left">
+          <div className="login-card">
+            <h2 className="login-text">Get Started Now</h2>
             <form onSubmit={handleSubmit}>
-              <div className="mb-3">
-                <label className="form-label">Username</label>
+              <div className="login-form-group">
+                <label className="login-form-label">Username</label>
                 <input
                   type="text"
                   id="username"
-                  className="form-control"
+                  className="login-form-input"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
                 />
               </div>
 
-              <div className="mb-3">
-                <label className="form-label">Email</label>
+              <div className="login-form-group">
+                <label className="login-form-label">Email</label>
                 <input
                   type="email"
                   id="email"
-                  className="form-control"
+                  className="login-form-input"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </div>
 
-              <div className="mb-3">
-                <label className="form-label">Password</label>
+              <div className="login-form-group">
+                <label className="login-form-label">Password</label>
                 <input
                   type="password"
                   id="password"
-                  className="form-control"
+                  className="login-form-input"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               </div>
 
-              <div className="mb-3">
-                <label className="form-label">Confirm Password</label>
+              <div className="login-form-group">
+                <label className="login-form-label">Confirm Password</label>
                 <input
                   type="password"
                   id="confirmPassword"
-                  className="form-control"
+                  className="login-form-input"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                 />
               </div>
 
-              <div className="grecaptcha-badge">
+              <div className="login-recaptcha">
                 <ReCAPTCHA
                   sitekey="6Lcak9wqAAAAABuhNvb8rOd5PDqozXUwr3xmaiap"
                   onChange={handleCaptchaChange}
                 />
               </div>
 
-              {errorMessage && <p className="text-danger text-center">{errorMessage}</p>}
-              <button className="custom-btn">Sign Up</button>
-              <div className="text-center mt-3">
-              <span className="text-muted">Already have an account? </span>
-              <Link to="/login" className="text-decoration-none text-primary">
-                Login
-              </Link>
+              {errorMessage && <p className="login-error">{errorMessage}</p>}
+              <button className="login-button">Sign Up</button>
+              <div className="login-links">
+                <span className="login-link-text">Already have an account? </span>
+                <Link to="/login" className="login-link">
+                  Login
+                </Link>
               </div>
             </form>
           </div>
         </div>
 
-        <RightBg />
+        {/* Right Side: RightBg */}
+        <div className="login-column login-right">
+          <RightBg />
+        </div>
       </div>
     </div>
   );
