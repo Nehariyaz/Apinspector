@@ -9,8 +9,7 @@ const createRequest = async (req, res) => {
   const userId = req.user.id; // Attach user ID from token
 
   try {
-    // Store the request in the DB first
-    const newRequest = await Request.create({
+      const newRequest = await Request.create({
       method,
       url,
       headers: JSON.stringify(headers),

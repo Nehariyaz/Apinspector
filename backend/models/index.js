@@ -1,5 +1,6 @@
 const sequelize = require("../config/database");  // ✅ Correct path
 const User = require("./User");
+const Request = require("./Request");
 
 sequelize.authenticate()
     .then(() => console.log("Database connected"))
@@ -9,4 +10,4 @@ sequelize.sync({ force: false })
     .then(() => console.log("Tables synced"))
     .catch(err => console.error("Sync error:", err));
 
-module.exports = { sequelize, User };  // ✅ Export sequelize
+module.exports = { sequelize, User };  

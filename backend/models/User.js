@@ -9,11 +9,9 @@ const User = sequelize.define("User", {
     password: { type: DataTypes.STRING, allowNull: false },
     resetPasswordToken: { type: DataTypes.STRING, allowNull: true },
     resetPasswordExpires: { type: DataTypes.DATE, allowNull: true },
+    otp: { type: DataTypes.STRING, allowNull: true },
+    otpExpires: { type: DataTypes.DATE, allowNull: true }
 });
 
-// Hash password before saving
-// User.beforeCreate(async (user) => {
-//     user.password = await bcrypt.hash(user.password, 10);
-// });
 
 module.exports = User;

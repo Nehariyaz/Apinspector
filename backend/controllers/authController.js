@@ -95,11 +95,18 @@ exports.login = async (req, res) => {
             console.log("Password does not match!");
             return res.status(401).json({ message: "Invalid credentials" });
         }
+
+        const otp = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
+        user.otp = otp;
+        user.otpExpires = Date.now() + 15 * 60 * 1000; // OTP valid for 15 mins
+        await user.save();
+
+        await sendEmail(user.email, "OTP Verification", `Your OTP is: ${otp}`);
+
+    
         const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-        await sendEmail(user.email, "Welcome to API Inspector", `Hello ${user.username},
-You have successfully logged in to API Inspector. 🎉\n\n\n🔍 With API Inspector, you can:\n\nCreate and manage test cases with ease\nSend and analyze API requests in real-time\nReview detailed reports for efficient testing\n\nIf you did not initiate this login, please reset your password or contact our support team.\n\nThank you for choosing API Inspector!\nHappy testing! 🚀`);
-
+        
         return res.status(200).json({ message: "Login successful", token });
 
     } catch (err) {
@@ -108,6 +115,54 @@ You have successfully logged in to API Inspector. 🎉\n\n\n🔍 With API Inspec
     }
 };
 
+
+// Verify OTP
+exports.verifyOtp = async (req, res) => {
+    const { email, otp } = req.body;
+
+    try {
+        const user = await User.findOne({ where: { email } });
+
+        if (!user || user.otp !== otp || Date.now() > user.otpExpires) {
+            return res.status(400).json({ message: "Invalid or expired OTP" });
+        }
+
+        // Clear OTP after successful verification
+        user.otp = null;
+        user.otpExpires = null;
+        await user.save();
+
+        res.status(200).json({ message: "OTP verified successfully" });
+    } catch (error) {
+        console.error("Error verifying OTP:", error);
+        res.status(500).json({ message: "OTP verification failed" });
+    }
+};
+
+// Resend OTP
+exports.resendOtp = async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const user = await User.findOne({ where: { email } });
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        user.otp = otp;
+        user.otpExpires = Date.now() + 15 * 60 * 1000; // 15 mins expiry
+        await user.save();
+
+        await sendEmail(user.email, "Resend OTP", `Your new OTP is: ${otp}`);
+
+        res.status(200).json({ message: "OTP resent successfully" });
+    } catch (error) {
+        console.error("Error resending OTP:", error);
+        res.status(500).json({ message: "Failed to resend OTP" });
+    }
+};
 
 
 //Forgot Password
@@ -131,11 +186,6 @@ exports.forgotpassword = async (req, res) => {
         user.resetPasswordExpires = Date.now() + 3600000;
         await user.save();
         const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
-
-        // console.log("Email:", user.email);
-        // console.log("Username:", user.username);
-        // console.log("Reset URL:", resetUrl);
-
 
         await sendEmail(
             user.email,

@@ -2,7 +2,7 @@ const axios= require("axios")
 const express = require("express");
 //const { register, login, logout, dashboard, forgotpassword, resetPassword  } = require("../controllers/authController");
 const { authMiddleware } = require("../middlewares/authMiddleware");
-const {register,login,forgotpassword,resetPassword,logout,dashboard,} = require("../controllers/authController");
+const {register,login,forgotpassword,resetPassword,logout,dashboard,verifyOtp,resendOtp} = require("../controllers/authController");
 const router = express.Router();
 
 //console.log("Register function:", register);
@@ -15,6 +15,9 @@ router.post("/reset-password/:token", resetPassword);
 router.post("/login", login);
 router.get("/logout", logout);
 router.get("/dashboard", authMiddleware, dashboard);
+router.post("/verify-otp", verifyOtp);
+router.post("/resend-otp", resendOtp);
+
 
 
 router.post("/api/register", async (req, res) => {
