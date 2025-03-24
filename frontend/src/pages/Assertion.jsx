@@ -198,6 +198,7 @@ const Assertion = () => {
             ) : (
               <div className="empty-state">
                 <i className="fa fa-clipboard-check"></i>
+                <div className="empty-icon">📋</div>
                 <h3>No Assertions Yet</h3>
                 <p>Create your first assertion to get started with API testing</p>
                 <button className="primary-button" onClick={() => setShowForm(true)}>
