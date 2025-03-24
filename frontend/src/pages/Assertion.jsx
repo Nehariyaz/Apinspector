@@ -6,11 +6,7 @@ import VerticalNavbar from "../components/VerticalNavbar";
 import HorizontalNavbar from "../components/HorizontalNavbar";
 
 const Assertion = () => {
-  const [assertions, setAssertions] = useState([
-    { testCase: 'User Login', assertionType: 'Status Code', condition: 'Equal', expectedValue: '290' },
-    { testCase: 'User Profile', assertionType: 'Response Time', condition: 'Less Than', expectedValue: '500ms' }
-  ]);
-
+  const [assertions, setAssertions] = useState([]);
   const [newAssertion, setNewAssertion] = useState({
     testCase: '',
     assertionType: '',
