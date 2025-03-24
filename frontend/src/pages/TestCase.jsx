@@ -14,6 +14,7 @@ const TestCase = () => {
     method: 'GET',
     url: '',
     queryParams: [{ key: '', value: '', description: '' }],
+    headers: [{ key: '', value: '', description: '' }],
     body: '',
   });
 
@@ -36,6 +37,7 @@ const TestCase = () => {
       method: 'GET',
       url: '',
       queryParams: [{ key: '', value: '', description: '' }],
+      headers: [{ key: '', value: '', description: '' }],
       body: '',
     });
   };
@@ -52,6 +54,13 @@ const TestCase = () => {
     setNewTestCase({ ...newTestCase, queryParams: updatedQueryParams });
   };
 
+  // Handle header changes
+  const handleHeaderChange = (headerIndex, field, value) => {
+    const updatedHeaders = [...newTestCase.headers];
+    updatedHeaders[headerIndex][field] = value;
+    setNewTestCase({ ...newTestCase, headers: updatedHeaders });
+  };
+
   // Add a new query parameter field
   const addQueryParam = () => {
     setNewTestCase({
@@ -65,6 +74,22 @@ const TestCase = () => {
     if (newTestCase.queryParams.length > 1) {
       const updatedQueryParams = newTestCase.queryParams.filter((_, index) => index !== paramIndex);
       setNewTestCase({ ...newTestCase, queryParams: updatedQueryParams });
+    }
+  };
+
+  // Add a new header field
+  const addHeader = () => {
+    setNewTestCase({
+      ...newTestCase,
+      headers: [...newTestCase.headers, { key: '', value: '', description: '' }],
+    });
+  };
+
+  // Remove a header field
+  const removeHeader = (headerIndex) => {
+    if (newTestCase.headers.length > 1) {
+      const updatedHeaders = newTestCase.headers.filter((_, index) => index !== headerIndex);
+      setNewTestCase({ ...newTestCase, headers: updatedHeaders });
     }
   };
 
@@ -143,6 +168,7 @@ const TestCase = () => {
                     <th>Method</th>
                     <th>URL</th>
                     <th>Query Parameters</th>
+                    <th>Headers</th>
                     <th>Body</th>
                     <th>Actions</th>
                   </tr>
@@ -179,6 +205,23 @@ const TestCase = () => {
                           </div>
                         ) : (
                           <span className="text-muted">No parameters</span>
+                        )}
+                      </td>
+                      <td className="headers-cell">
+                        {testCase.headers && testCase.headers.length > 0 && 
+                         testCase.headers.some(header => header.key || header.value) ? (
+                          <div className="header-container">
+                            {testCase.headers.map((header, headerIndex) => (
+                              header.key || header.value ? (
+                                <div key={headerIndex} className="header-item">
+                                  {header.key && <span className="header-key">{header.key}</span>}
+                                  {header.value && <span className="header-value">{header.value}</span>}
+                                </div>
+                              ) : null
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="text-muted">No headers</span>
                         )}
                       </td>
                       <td className="body-cell">
@@ -301,6 +344,51 @@ const TestCase = () => {
                     </div>
                     <button onClick={addQueryParam} className="btn btn-secondary btn-sm add-param-btn">
                       <span>+</span> Add Query Parameter
+                    </button>
+                  </div>
+                  <div className="form-group">
+                    <label>Headers</label>
+                    <div className="headers-container">
+                      {newTestCase.headers.map((header, headerIndex) => (
+                        <div key={headerIndex} className="header-form-group">
+                          <div className="header-header">
+                            <span className="header-number">Header {headerIndex + 1}</span>
+                            {newTestCase.headers.length > 1 && (
+                              <button 
+                                className="remove-header-btn" 
+                                onClick={() => removeHeader(headerIndex)}
+                                title="Remove header"
+                              >
+                                &times;
+                              </button>
+                            )}
+                          </div>
+                          <input
+                            type="text"
+                            className="form-control mb-1"
+                            placeholder="Key (e.g. Content-Type)"
+                            value={header.key}
+                            onChange={(e) => handleHeaderChange(headerIndex, 'key', e.target.value)}
+                          />
+                          <input
+                            type="text"
+                            className="form-control mb-1"
+                            placeholder="Value (e.g. application/json)"
+                            value={header.value}
+                            onChange={(e) => handleHeaderChange(headerIndex, 'value', e.target.value)}
+                          />
+                          <input
+                            type="text"
+                            className="form-control mb-1"
+                            placeholder="Description (optional)"
+                            value={header.description}
+                            onChange={(e) => handleHeaderChange(headerIndex, 'description', e.target.value)}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    <button onClick={addHeader} className="btn btn-secondary btn-sm add-header-btn">
+                      <span>+</span> Add Header
                     </button>
                   </div>
                   <div className="form-group">
