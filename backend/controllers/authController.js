@@ -88,6 +88,7 @@ exports.login = async (req, res) => {
             return res.status(404).json({ message: "User does not exist" });
         }
 
+        const username = user.username;
 
         const isMatch = await bcrypt.compare(password, user.password);
 
@@ -107,7 +108,7 @@ exports.login = async (req, res) => {
         const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
         
-        return res.status(200).json({ message: "Login successful", token });
+        return res.status(200).json({ message: "Login successful", token, username });
 
     } catch (err) {
         console.error("Login Error:", err);
