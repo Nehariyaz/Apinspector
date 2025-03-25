@@ -30,7 +30,9 @@ const verifyCaptcha = async (captchaToken) => {
 // User Registration
 exports.register = async (req, res) => {
     try {
-        console.log("Incoming Request Body:", JSON.stringify(req.body, null, 2));
+        console.log("Incoming Registration Request:", req.body);
+
+        //console.log("Incoming Request Body:", JSON.stringify(req.body, null, 2));
         
         const { username, email, password, captchaToken } = req.body;
         

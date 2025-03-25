@@ -8,16 +8,23 @@ import "../styles/HorizontalNavbar.css";
 const HorizontalNavbar = () => {
   const [user, setUser] = useState({
     name: "User", // Default username
-    profilePic: "https://via.placeholder.com/40" // Default profile picture
+    profilePic: "https://lh3.googleusercontent.com/a/default-user" // Default profile picture
   });
   const navigate = useNavigate();
 
   useEffect(() => {
-    const savedUser = JSON.parse(localStorage.getItem("user")) || {
-      name: "John Doe",
-      profilePic: "https://lh3.googleusercontent.com/a/default-user"
-    };
-    setUser(savedUser);
+    const savedUser = localStorage.getItem("user")
+
+    if (savedUser) {
+      try {
+        setUser({
+          name: savedUser || "User",
+          profilePic: "https://lh3.googleusercontent.com/a/default-user"
+        });
+      } catch (error) {
+        console.error("Failed to parse user data:", error);
+      }
+    }
   }, []);
 
   const handleLogout = () => {

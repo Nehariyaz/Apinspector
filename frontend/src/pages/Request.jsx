@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useId, useState } from "react";
 import { Save, Play, X } from "lucide-react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/Request.css";
@@ -11,7 +11,7 @@ const Request = () => {
   const [method, setMethod] = useState("GET");
   const [url, setUrl] = useState("");
   const [contentType, setContentType] = useState("application/json");
-  const [requestBody, setRequestBody] = useState('{\n  "key": "value"\n}');
+  const [requestBody, setRequestBody] = useState('{}');
   const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
   
@@ -68,53 +68,69 @@ const Request = () => {
     setHeaders(headerOptions[option]);
   };
 
-  // Handle sending the request
   const handleSendRequest = async () => {
     if (!url) {
       alert("Please enter a URL.");
       return;
     }
-
+  
     setLoading(true);
+  
     try {
-      // Parse request body if it's JSON
-      const requestData = contentType === "application/json" && requestBody 
-        ? JSON.parse(requestBody) 
-        : requestBody;
-      
-      // Build query string from parameters
-      const queryString = queryParams
-        .filter(param => param.key && param.value)
-        .map(param => `${encodeURIComponent(param.key)}=${encodeURIComponent(param.value)}`)
-        .join('&');
-      
-      // Combine URL with query string
-      const fullUrl = queryString ? `${url}?${queryString}` : url;
-
-      // Build headers object
-      const requestHeaders = headers
-        .filter(header => header.key && header.value)
-        .reduce((acc, header) => {
-          acc[header.key] = header.value;
-          return acc;
-        }, { "Content-Type": contentType });
-
-      // Make the request
-      const res = await axios({
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("No authentication token found. Please log in.");
+        setLoading(false);
+        return;
+      }
+      const uid = localStorage.getItem("userId");
+      const requestData = {
+        userId: uid,           // Replace with actual user ID
+        name: "API Test Request",
+        url,
         method,
-        url: fullUrl,
-        headers: requestHeaders,
-        data: method !== "GET" && requestBody ? requestData : null,
-      });
+        headers: headers
+          .filter(header => header.key && header.value)
+          .reduce((acc, header) => {
+            acc[header.key] = header.value;
+            return acc;
+          }, {}),
+        queryParams: queryParams
+          .filter(param => param.key && param.value)
+          .reduce((acc, param) => {
+            acc[param.key] = param.value;
+            return acc;
+          }, {}),
+        contentType,
+        body: requestBody || null
+      };
+  
+      console.log(" Sending request to backend:", requestData);
+  
+      // Send request to backend
+      const res = await axios.post(
+        "http://localhost:3000/request", 
+        requestData,
+        {
+          headers: {
+            "Authorization": `Bearer ${token}`,  // Add token to request
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
 
-      setResponse(res.data);
+      console.log("Response from backend:", res.data);
+  
+     
     } catch (error) {
-      setResponse(error.response ? error.response.data : "Error sending request");
+      console.error("Error:", error);
+      setResponse(error.response ? error.response.data : "Error sending request to backend");
     } finally {
       setLoading(false);
     }
   };
-
+  
   // Table handlers
   const handleItemChange = (index, field, value, setter, items) => {
     const updatedItems = [...items];
@@ -466,9 +482,11 @@ const Request = () => {
                   </div>
                   <div className="card-body">
                     <pre>
-                      {typeof response === 'object' 
-                        ? JSON.stringify(response, null, 2) 
-                        : response}
+                    {response 
+          ? (typeof response === "object" 
+              ? JSON.stringify(response, null, 2) 
+              : response)
+          : "Send request to receive response"}
                     </pre>
                   </div>
                 </div>

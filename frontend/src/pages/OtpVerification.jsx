@@ -11,14 +11,14 @@ const OtpVerification = () => {
   const inputRefs = useRef([]);
   const navigate = useNavigate();
   const location = useLocation();
-  const email = location.state?.email;
+  const email = localStorage.getItem("email")
 
   const handleChange = (element, index) => {
     if (!isNaN(element.value) && element.value.length <= 1) {
       const newOtp = [...otp];
       newOtp[index] = element.value;
       setOtp(newOtp);
-      
+
       if (element.nextSibling && element.value) {
         element.nextSibling.focus();
       }
@@ -37,11 +37,11 @@ const OtpVerification = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const otpValue = otp.join('');
-    
+
     try {
-      const response = await axios.post('http://localhost:3000/api/verify-otp', { email, otp: otpValue });
+      const response = await axios.post('http://localhost:3000/verify-otp', { email, otp: otpValue });
       alert(response.data.message);
-      navigate('/dashboard');
+      navigate('/request');
     } catch (error) {
       setErrorMessage(error.response?.data?.message || 'OTP verification failed!');
     }
@@ -49,7 +49,7 @@ const OtpVerification = () => {
 
   const handleResendOtp = async () => {
     try {
-      const response = await axios.post('http://localhost:3000/api/resend-otp', { email });
+      const response = await axios.post('http://localhost:3000/resend-otp', { email });
       setResendMessage(response.data.message || 'OTP has been resent!');
     } catch (error) {
       setResendMessage(error.response?.data?.message || 'Failed to resend OTP. Try again!');

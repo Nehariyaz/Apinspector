@@ -32,6 +32,9 @@ const Login = () => {
       });
       console.log("Login successful! Redirecting...");
       localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user",response.data.username);
+      localStorage.setItem("userId",response.data.id);
+      localStorage.setItem("email",email);
       alert(response.data.message); 
       navigate('/otp-verification');  
     } catch (error) {

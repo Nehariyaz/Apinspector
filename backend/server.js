@@ -9,7 +9,6 @@ const { sequelize, User, Request } = require("./models");
 //const sequelize = require("./config/database");
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
 
-
 dotenv.config();
 
 const app = express();
@@ -36,15 +35,11 @@ app.use(session({
 
 // API Routes
 app.use("/", authRoutes);
-app.use("/api", requestRoutes);
+app.use("/", requestRoutes);
 
 app.use((err, req, res, next) => {
   console.error("Internal Server Error:", err);
   res.status(500).json({ error: "Internal Server Error", details: err.message });
-});
-
-app.get("/health", (req, res) => {
-  res.status(200).json({ status: "ok" });
 });
 
 // Database Connection

@@ -49,7 +49,7 @@ const SignUp = () => {
 
       console.log("Server Response:", response.data);
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         alert("Registration successful! Redirecting...");
         navigate("/request");
       } else {

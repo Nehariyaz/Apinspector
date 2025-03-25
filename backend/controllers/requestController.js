@@ -9,7 +9,8 @@ const createRequest = async (req, res) => {
   const userId = req.user.id; // Attach user ID from token
 
   try {
-      const newRequest = await Request.create({
+    // Store the request in the DB first
+    const newRequest = await Request.create({
       method,
       url,
       headers: JSON.stringify(headers),
@@ -53,7 +54,7 @@ const createRequest = async (req, res) => {
       correlationId,
       replyTo: replyQueue.queue,
     });
-    //console.log("Request sent to queue:", requestData);
+    console.log("Request sent to queue:", requestData);
 
     // Wait for the API response from the consumer
     const apiResponse = await responsePromise;
