@@ -1,4 +1,4 @@
-import React, { useId, useState } from "react";
+import React, { useState } from "react";
 import { Save, Play, X } from "lucide-react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/Request.css";
@@ -11,9 +11,10 @@ const Request = () => {
   const [method, setMethod] = useState("GET");
   const [url, setUrl] = useState("");
   const [contentType, setContentType] = useState("application/json");
-  const [requestBody, setRequestBody] = useState('{}');
+  const [requestBody, setRequestBody] = useState('{\n  "key": "value"\n}');
   const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [requestName, setRequestName] = useState(""); 
   
   // Data for tables - now always visible
   const [queryParams, setQueryParams] = useState([
@@ -68,69 +69,53 @@ const Request = () => {
     setHeaders(headerOptions[option]);
   };
 
+  // Handle sending the request
   const handleSendRequest = async () => {
     if (!url) {
       alert("Please enter a URL.");
       return;
     }
-  
-    setLoading(true);
-  
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        alert("No authentication token found. Please log in.");
-        setLoading(false);
-        return;
-      }
-      const uid = localStorage.getItem("userId");
-      const requestData = {
-        userId: uid,           // Replace with actual user ID
-        name: "API Test Request",
-        url,
-        method,
-        headers: headers
-          .filter(header => header.key && header.value)
-          .reduce((acc, header) => {
-            acc[header.key] = header.value;
-            return acc;
-          }, {}),
-        queryParams: queryParams
-          .filter(param => param.key && param.value)
-          .reduce((acc, param) => {
-            acc[param.key] = param.value;
-            return acc;
-          }, {}),
-        contentType,
-        body: requestBody || null
-      };
-  
-      console.log(" Sending request to backend:", requestData);
-  
-      // Send request to backend
-      const res = await axios.post(
-        "http://localhost:3000/request", 
-        requestData,
-        {
-          headers: {
-            "Authorization": `Bearer ${token}`,  // Add token to request
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
 
-      console.log("Response from backend:", res.data);
-  
-     
+    setLoading(true);
+    try {
+      // Parse request body if it's JSON
+      const requestData = contentType === "application/json" && requestBody 
+        ? JSON.parse(requestBody) 
+        : requestBody;
+      
+      // Build query string from parameters
+      const queryString = queryParams
+        .filter(param => param.key && param.value)
+        .map(param => `${encodeURIComponent(param.key)}=${encodeURIComponent(param.value)}`)
+        .join('&');
+      
+      // Combine URL with query string
+      const fullUrl = queryString ? `${url}?${queryString}` : url;
+
+      // Build headers object
+      const requestHeaders = headers
+        .filter(header => header.key && header.value)
+        .reduce((acc, header) => {
+          acc[header.key] = header.value;
+          return acc;
+        }, { "Content-Type": contentType });
+
+      // Make the request
+      const res = await axios({
+        method,
+        url: fullUrl,
+        headers: requestHeaders,
+        data: method !== "GET" && requestBody ? requestData : null,
+      });
+
+      setResponse(res.data);
     } catch (error) {
-      console.error("Error:", error);
-      setResponse(error.response ? error.response.data : "Error sending request to backend");
+      setResponse(error.response ? error.response.data : "Error sending request");
     } finally {
       setLoading(false);
     }
   };
-  
+
   // Table handlers
   const handleItemChange = (index, field, value, setter, items) => {
     const updatedItems = [...items];
@@ -178,18 +163,28 @@ const Request = () => {
     return curlCommand;
   };
 
-  return (
-    <div className="d-flex flex-column">
-      <HorizontalNavbar />
-      <div className="d-flex">
-        <VerticalNavbar />
-        <div className="main">
-          <div className="content-container">
-            {/* Left container with request builder */}
-            <div className="left-container">
-              {/* Top action bar */}
-              <div className="top-bar">
-                <button className="save btn">
+  // ... (keep all the imports and state declarations the same)
+
+return (
+  <div className="d-flex flex-column">
+    <HorizontalNavbar />
+    <div className="d-flex">
+      <VerticalNavbar />
+      <div className="main">
+        <div className="content-container">
+          {/* Left container with request builder */}
+          <div className="left-container">
+            {/* Top action bar */}
+            <div className="top-bar d-flex align-items-center">
+              <input
+                type="text"
+                className="form-control request-name-input me-2"
+                placeholder="Request name"
+                value={requestName}
+                onChange={(e) => setRequestName(e.target.value)}
+              />
+              <div className="button-group d-flex">
+                <button className="save btn me-2">
                   <Save size={16} />
                   Save
                 </button>
@@ -213,6 +208,7 @@ const Request = () => {
                   )}
                 </button>
               </div>
+            </div>
 
               {/* Method and URL input */}
               <div className="combined-method-url-container">
@@ -463,39 +459,38 @@ const Request = () => {
               </div>
             </div>
 
-            {/* Right container with code snippet */}
             <div className="right-container">
               <div className="card">
                 <div className="card-header">
                   <h5>Code Snippet</h5>
                 </div>
                 <div className="card-body">
+                  <textarea
+                    className="form-control"
+                    rows="10"
+                    readOnly
+                    value={response ? 
+                      (typeof response === 'object' 
+                        ? JSON.stringify(response, null, 2) 
+                        : response)
+                      : ''
+                    }
+                    placeholder="Response will be displayed here..."
+                  />
+                </div>
+                <div className="card-body">
                   <pre>{generateCurlCommand()}</pre>
                 </div>
               </div>
+                
+              </div>
               
-              {/* Response section - shown after request is sent */}
-              {response && (
-                <div className="card mt-4">
-                  <div className="card-header">
-                    <h5>Response</h5>
-                  </div>
-                  <div className="card-body">
-                    <pre>
-                    {response 
-          ? (typeof response === "object" 
-              ? JSON.stringify(response, null, 2) 
-              : response)
-          : "Send request to receive response"}
-                    </pre>
-                  </div>
-                </div>
-              )}
+              {/* Response Output Section */}
+              
             </div>
           </div>
         </div>
       </div>
-    </div>
   );
 };
 
