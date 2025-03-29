@@ -77,7 +77,7 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
     try {
         const { email, password, captchaToken } = req.body;
-        console.log(email,password,captchaToken);
+        //console.log(email,password,captchaToken);
         if (!captchaToken || !(await verifyCaptcha(captchaToken))) {
             //console.log("Login captcha failed")
             return res.status(403).json({ message: "reCAPTCHA failed, please try again" });
@@ -101,13 +101,14 @@ exports.login = async (req, res) => {
 
         const otp = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
         user.otp = otp;
-        user.otpExpires = Date.now() + 15 * 60 * 1000; // OTP valid for 15 mins
+        user.otpExpires = Date.now() + 15 * 60 * 1000; 
         await user.save();
 
         await sendEmail(user.email, "OTP Verification", `Your OTP is: ${otp}`);
 
     
         const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+        console.log("Token: ", token);
 
         
         return res.status(200).json({ message: "Login successful", token, username });
