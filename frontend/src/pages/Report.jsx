@@ -1,33 +1,44 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import "@/styles/Report.css";
-import "@/styles/VerticalNavbar.css";
-import "@/styles/HorizontalNavbar.css";
 import VerticalNavbar from "../components/VerticalNavbar";
 import HorizontalNavbar from "../components/HorizontalNavbar";
+import { FaCalendarAlt, FaDownload, FaEye, FaCheckCircle, FaTimesCircle, FaChartPie } from 'react-icons/fa';
+import "../styles/Report.css";
 
 const Report = () => {
   const [startDate, setStartDate] = useState('2025-03-01');
   const [endDate, setEndDate] = useState('2025-03-13');
-  const [successRate, setSuccessRate] = useState('78%'); // Dynamic success rate
-  const [testsPassed, setTestsPassed] = useState(125); // Dynamic tests passed
-  const [testsFailed, setTestsFailed] = useState(35); // Dynamic tests failed
+  const [successRate, setSuccessRate] = useState('78%');
+  const [testsPassed, setTestsPassed] = useState(125);
+  const [testsFailed, setTestsFailed] = useState(35);
+  const [recentRuns, setRecentRuns] = useState([
+    { id: 'RUN-1023', date: '03/13/2025', tests: '35/40', passRate: '87.5%', duration: '2m 43s' },
+    { id: 'RUN-1022', date: '03/12/2025', tests: '38/40', passRate: '95.0%', duration: '2m 38s' },
+    { id: 'RUN-1021', date: '03/11/2025', tests: '33/40', passRate: '82.5%', duration: '2m 55s' },
+    { id: 'RUN-1020', date: '03/10/2025', tests: '37/40', passRate: '92.5%', duration: '2m 41s' }
+  ]);
 
   useEffect(() => {
-    // Replace this with actual API call or data fetching logic
+    // Replace with actual API call or data fetching logic
     const fetchData = async () => {
-      // Example: Fetch data based on the selected date range
-      const response = await fetch(`/api/report?startDate=${startDate}&endDate=${endDate}`);
-      const data = await response.json();
+      try {
+        // Example: Fetch data based on the selected date range
+        const response = await fetch(`/api/report?startDate=${startDate}&endDate=${endDate}`);
+        const data = await response.json();
 
-      // Update state with fetched data
-      setSuccessRate(data.successRate);
-      setTestsPassed(data.testsPassed);
-      setTestsFailed(data.testsFailed);
+        // Update state with fetched data
+        setSuccessRate(data.successRate);
+        setTestsPassed(data.testsPassed);
+        setTestsFailed(data.testsFailed);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        // Handle error state
+      }
     };
 
-    fetchData();
-  }, [startDate, endDate]); // Re-fetch data when date range changes
+    // Comment out fetchData call for now to avoid actual API calls during development
+    // fetchData();
+  }, [startDate, endDate]);
 
   const handleApply = () => {
     // Logic to filter or fetch data based on the selected date range
@@ -39,105 +50,120 @@ const Report = () => {
     console.log('Exporting report...');
   };
 
+  const handleViewRun = (runId) => {
+    console.log('Viewing run:', runId);
+  };
+
   return (
-    <div className="d-flex flex-column">
+    <div className="app-container">
       <HorizontalNavbar />
-      <div className="d-flex">
+      <div className="content-wrapper">
         <VerticalNavbar />
-        <div className="container mt-4 content">
-          <div className="d-flex justify-content-between align-items-center">
-            <h2>Test Run Summary</h2>
-            <button className="btn btn-success" onClick={handleExport}>
-              Export Report
+        <main className="report-container">
+          <header className="report-header">
+            <div className="report-title">
+              <h1>Test Run Summary</h1>
+              <p className="text-muted">Overview of test execution results</p>
+            </div>
+            <button className="export-btn" onClick={handleExport}>
+              <FaDownload /> Export Report
             </button>
-          </div>
+          </header>
 
-          <div className="mt-4">
-            <table className="table table-bordered testcase-table">
-              <thead>
-                <tr>
-                  <th colSpan="5">Date Range:</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <input
-                      type="date"
-                      value={startDate}
-                      onChange={(e) => setStartDate(e.target.value)}
-                      className="form-control"
-                    />
-                  </td>
-                  <td>to</td>
-                  <td>
-                    <input
-                      type="date"
-                      value={endDate}
-                      onChange={(e) => setEndDate(e.target.value)}
-                      className="form-control"
-                    />
-                  </td>
-                  <td>
-                    <button className="btn btn-success" onClick={handleApply}>
-                      Apply
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-
-            {/* Success Rate, Tests Passed, and Tests Failed in 3 boxes */}
-            <div className="row mt-3">
-              <div className="col-md-4 metric-box-container">
-                <div className="metric-box bg-light-blue">
-                  <div className="metric-title text-dark-blue">Success Rate</div>
-                  <div className="metric-value text-dark-blue">{successRate}</div>
+          <section className="date-filter-section">
+            <div className="date-filter-card">
+              <h2 className="filter-title">
+                <FaCalendarAlt /> Date Range
+              </h2>
+              <div className="date-inputs">
+                <div className="date-field">
+                  <label>From</label>
+                  <input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                  />
                 </div>
-              </div>
-              <div className="col-md-4 metric-box-container">
-                <div className="metric-box bg-light-green">
-                  <div className="metric-title text-dark-green">Tests Passed</div>
-                  <div className="metric-value text-dark-green">{testsPassed}</div>
+                <div className="date-separator">to</div>
+                <div className="date-field">
+                  <label>To</label>
+                  <input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                  />
                 </div>
-              </div>
-              <div className="col-md-4 metric-box-container">
-                <div className="metric-box bg-light-pink">
-                  <div className="metric-title text-dark-pink">Tests Failed</div>
-                  <div className="metric-value text-dark-pink">{testsFailed}</div>
-                </div>
+                <button className="apply-btn" onClick={handleApply}>
+                  Apply
+                </button>
               </div>
             </div>
-          </div>
+          </section>
 
-          <div className="mt-4">
+          <section className="metrics-section">
+            <div className="metric-card success-rate">
+              <div className="metric-icon">
+                <FaChartPie />
+              </div>
+              <div className="metric-content">
+                <h3>Success Rate</h3>
+                <div className="metric-value">{successRate}</div>
+              </div>
+            </div>
+            <div className="metric-card tests-passed">
+              <div className="metric-icon">
+                <FaCheckCircle />
+              </div>
+              <div className="metric-content">
+                <h3>Tests Passed</h3>
+                <div className="metric-value">{testsPassed}</div>
+              </div>
+            </div>
+            <div className="metric-card tests-failed">
+              <div className="metric-icon">
+                <FaTimesCircle />
+              </div>
+              <div className="metric-content">
+                <h3>Tests Failed</h3>
+                <div className="metric-value">{testsFailed}</div>
+              </div>
+            </div>
+          </section>
+
+          <section className="recent-runs-section">
             <h2>Recent Test Runs</h2>
-            <table className="table table-bordered testcase-table">
-              <thead>
-                <tr>
-                  <th>Run ID</th>
-                  <th>Date</th>
-                  <th>Tests</th>
-                  <th>Pass Rate</th>
-                  <th>Duration</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>RUN-1023</td>
-                  <td>03/13/2025</td>
-                  <td>35/40</td>
-                  <td>87.5%</td>
-                  <td>2m 43s</td>
-                  <td>
-                    <button className="btn btn-success">View</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+            <div className="table-responsive">
+              <table className="runs-table">
+                <thead>
+                  <tr>
+                    <th>Run ID</th>
+                    <th>Date</th>
+                    <th>Tests</th>
+                    <th>Pass Rate</th>
+                    <th>Duration</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {recentRuns.map(run => (
+                    <tr key={run.id}>
+                      <td className="run-id">{run.id}</td>
+                      <td>{run.date}</td>
+                      <td>{run.tests}</td>
+                      <td className="pass-rate">{run.passRate}</td>
+                      <td>{run.duration}</td>
+                      <td>
+                        <button className="view-btn" onClick={() => handleViewRun(run.id)}>
+                          <FaEye /> View
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </main>
       </div>
     </div>
   );
