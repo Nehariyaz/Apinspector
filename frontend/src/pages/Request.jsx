@@ -5,10 +5,11 @@ import "../styles/Request.css";
 import VerticalNavbar from "../components/VerticalNavbar";
 import HorizontalNavbar from "../components/HorizontalNavbar"; 
 import axios from "axios";
+import xmlFormatter from 'xml-formatter';
 
 const Request = () => {
-  // State management
-  const [method, setMethod] = useState("GET");
+  
+  const [method, setMethod] = useState("");
   const [url, setUrl] = useState("");
   const [contentType, setContentType] = useState("application/json");
   const [requestBody, setRequestBody] = useState('{\n  "key": "value"\n}');
@@ -49,7 +50,7 @@ const Request = () => {
     custom: [{ key: '', value: '', description: '' }],
     option1: [
       { key: 'Authorization', value: 'Bearer token123', description: 'Auth token' },
-      { key: 'Accept', value: 'application/json', description: 'Response format' }
+      { key: 'Content-Type', value: 'application/json', description: 'Response format' }
     ],
     option2: [
       { key: 'Cache-Control', value: 'no-cache', description: 'Caching directive' },
@@ -75,44 +76,99 @@ const Request = () => {
       alert("Please enter a URL.");
       return;
     }
+    const token = localStorage.getItem('token'); 
 
+    if (!token) {
+      alert('Session timed out! Please log in again.');
+      setLoading(false);
+      return;
+    }
     setLoading(true);
+  
     try {
-      // Parse request body if it's JSON
-      const requestData = contentType === "application/json" && requestBody 
-        ? JSON.parse(requestBody) 
-        : requestBody;
-      
-      // Build query string from parameters
+      let requestData;
+  
+     
+      if (contentType === "application/json" && requestBody) {
+        try {
+          requestData = JSON.parse(requestBody);  
+        } catch (error) {
+          alert("Invalid JSON format");
+          setLoading(false);
+          return;
+        }
+      } else if ((contentType === "application/xml" || contentType === "text/xml") && requestBody) {
+        requestData = requestBody;  
+      } else if (contentType === "application/x-www-form-urlencoded" && requestBody) {
+        requestData = new URLSearchParams(
+          Object.fromEntries(
+            requestBody.split('&').map(param => param.split('='))  // Convert to form-urlencoded
+          )
+        ).toString();
+      } else {
+        requestData = requestBody; 
+      }
+  
+      // Build query string
       const queryString = queryParams
         .filter(param => param.key && param.value)
         .map(param => `${encodeURIComponent(param.key)}=${encodeURIComponent(param.value)}`)
         .join('&');
-      
-      // Combine URL with query string
+  
       const fullUrl = queryString ? `${url}?${queryString}` : url;
-
-      // Build headers object
+  
+      // Build headers
       const requestHeaders = headers
         .filter(header => header.key && header.value)
         .reduce((acc, header) => {
           acc[header.key] = header.value;
           return acc;
-        }, { "Content-Type": contentType });
+        }, { "Content-Type": contentType }
+      );
 
-      // Make the request
-      const res = await axios({
+      const appHeaders = {
+        "Authorization": `Bearer ${token}`   // Your app's token
+      };
+      
+      const res = await axios.post("http://localhost:3000/request",{
         method,
         url: fullUrl,
         headers: requestHeaders,
-        data: method !== "GET" && requestBody ? requestData : null,
-      });
-
-      setResponse(res.data);
+        data: requestData ,
+      },{headers: appHeaders} );
+  
+      
+      const contentTypeHeader = res.headers['content-type'];
+  
+      if (contentTypeHeader.includes('application/json')) {
+        setResponse(JSON.stringify(res.data, null, 2));  // Pretty print JSON
+      } else if (contentTypeHeader.includes('text')) {
+        setResponse(res.data);  // Display plain text response
+      } else if (contentTypeHeader.includes('application/xml') || contentTypeHeader.includes('text/xml')) {
+        const formattedXml = xmlFormatter(res.data);  // Format XML
+        setResponse(formattedXml);
+      } else if (contentTypeHeader.includes('application/x-www-form-urlencoded')) {
+        const formData = new URLSearchParams(res.data).toString();
+        setResponse(formData);
+      } else {
+        setResponse(`Unsupported content type: ${contentTypeHeader}`);
+      }
+  
     } catch (error) {
-      setResponse(error.response ? error.response.data : "Error sending request");
+      console.log(error);
+      setResponse(error.response ? 
+        JSON.stringify(error.response.data, null, 2) : 
+        "Error sending request"
+      );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSaveRequest = async () => {
+    if (!requestName) {
+      alert("Please enter a request name.");
+      return;
     }
   };
 
@@ -135,36 +191,7 @@ const Request = () => {
     }
   };
 
-  // Generate curl command
-  const generateCurlCommand = () => {
-    // Build query string
-    const queryString = queryParams
-      .filter(param => param.key && param.value)
-      .map(param => `${encodeURIComponent(param.key)}=${encodeURIComponent(param.value)}`)
-      .join('&');
-    
-    const fullUrl = queryString ? `${url}?${queryString}` : url;
-    
-    // Start building the curl command
-    let curlCommand = `curl --location '${fullUrl}' \\\n  --request ${method}`;
-    
-    // Add headers
-    headers
-      .filter(header => header.key && header.value)
-      .forEach(header => {
-        curlCommand += ` \\\n  --header '${header.key}: ${header.value}'`;
-      });
-    
-    // Add body for non-GET requests
-    if (method !== "GET" && requestBody) {
-      curlCommand += ` \\\n  --data '${requestBody.replace(/'/g, "\\'")}'`;
-    }
-    
-    return curlCommand;
-  };
-
-  // ... (keep all the imports and state declarations the same)
-
+  
 return (
   <div className="d-flex flex-column">
     <HorizontalNavbar />
@@ -478,14 +505,11 @@ return (
                     placeholder="Response will be displayed here..."
                   />
                 </div>
-                <div className="card-body">
-                  <pre>{generateCurlCommand()}</pre>
-                </div>
               </div>
                 
               </div>
               
-              {/* Response Output Section */}
+              
               
             </div>
           </div>
