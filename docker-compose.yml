@@ -9,8 +9,13 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
+       - DB_HOST=postgres_db
+      - DOCKER_ENV=true
     volumes:
       - ./backend/.env:/app/.env
+    depends_on:
+      - postgres
+      - rabbitmq
 
   frontend:
     build:
@@ -20,3 +25,30 @@ services:
       - "5173:5173"
     depends_on:
       - backend
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydatabase
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq_server
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+volumes:
+  postgres_data:

@@ -9,7 +9,18 @@ const { sequelize, User, Request } = require("./models");
 //const sequelize = require("./config/database");
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
 
+
+require("dotenv").config({ path: "./.env" });
+
 dotenv.config();
+const DB_HOST = process.env.DB_HOST || 'localhost';
+
+// If running inside Docker, use `postgres_db`
+const isDocker = process.env.DOCKER_ENV === 'true';
+const databaseHost = isDocker ? 'postgres_db' : DB_HOST;
+
+console.log(`Connecting to database at: ${databaseHost}`);
+
 
 const app = express();
 
