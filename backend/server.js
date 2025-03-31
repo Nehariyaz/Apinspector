@@ -9,7 +9,6 @@ const { sequelize, User, Request } = require("./models");
 //const sequelize = require("./config/database");
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
 
-
 require("dotenv").config({ path: "./.env" });
 
 dotenv.config();

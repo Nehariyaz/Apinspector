@@ -1,27 +1,57 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const { DataTypes } = require("sequelize");
+const sequelize = require("../config/database");
 
-const TestCase = sequelize.define('TestCase', {
-  name: {
+
+const TestCase = sequelize.define("TestCase", {
+  id: { 
+    type: DataTypes.UUID, 
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true 
+  },
+  method: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  method: {
-    type: DataTypes.ENUM('GET', 'POST', 'PUT', 'DELETE'),
+  name:{
+    type: DataTypes.STRING,
     allowNull: false,
   },
   url: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  queryParams: {
-    type: DataTypes.JSON,  // Store query params as JSON
-    defaultValue: [],
+  headers: {
+    type: DataTypes.JSON,
+    allowNull: true,
   },
   body: {
-    type: DataTypes.TEXT,  // Store JSON data as text
+    type: DataTypes.TEXT,
     allowNull: true,
-  }
+  },
+  response: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
+  status: {
+    type: DataTypes.STRING,
+    defaultValue: "pending",
+  },
+  userId: {
+    type: DataTypes.UUID, 
+    allowNull: false,
+    references: {
+      model: "Users", 
+      key: "id",
+    },
+  },
 });
+
+
+TestCase.associate = (models) => {
+  TestCase.belongsTo(models.User, {
+    foreignKey: "userId",
+    as: "user",
+  });
+};
 
 module.exports = TestCase;

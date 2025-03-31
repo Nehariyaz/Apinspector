@@ -1,15 +1,15 @@
 const amqp = require("amqplib");
-const { Request } = require("../models");
+const { Request, TestCase } = require("../models");
 
 const RABBITMQ_URL = "amqp://localhost:5672";
 const QUEUE_NAME = "api_requests";
 
 const createRequest = async (req, res) => {
   const { method, url, headers, body } = req.body;
-  const userId = req.user.id; // Attach user ID from token
+  const userId = req.user.id; 
 
   try {
-    // Store the request in the DB first
+    
     const newRequest = await Request.create({
       method,
       url,
@@ -19,16 +19,16 @@ const createRequest = async (req, res) => {
       status: "pending",
     });
 
-    // Connect to RabbitMQ
+    
     const connection = await amqp.connect(RABBITMQ_URL);
     const channel = await connection.createChannel();
     await channel.assertQueue(QUEUE_NAME, { durable: false });
 
-    // Create a temporary reply queue for this request
+    
     const replyQueue = await channel.assertQueue("", { exclusive: true });
-    const correlationId = newRequest.id; // Use request ID as correlation ID
+    const correlationId = newRequest.id; 
 
-    // Promise to wait for the response
+
     const responsePromise = new Promise((resolve) => {
       channel.consume(
         replyQueue.queue,
@@ -41,9 +41,9 @@ const createRequest = async (req, res) => {
       );
     });
 
-    // Send the request to the queue with reply-to and correlation ID
+    
     const requestData = {
-      id: newRequest.id, // Ensure id is included
+      id: newRequest.id, 
       method,
       url,
       headers,
@@ -56,44 +56,55 @@ const createRequest = async (req, res) => {
     });
     console.log("Request sent to queue:", requestData);
 
-    // Wait for the API response from the consumer
+
     const apiResponse = await responsePromise;
 
-    // Clean up
+
     await channel.close();
     await connection.close();
 
-    // Return the status and message from the API call
+
     res.status(200).json({
       status: apiResponse.status,
       message: apiResponse.message,
     });
-    //console.log(apiResponse.status,apiResponse.message);
+
+
   } catch (error) {
     console.error("Error processing request:", error);
     res.status(500).json({ error: "Error processing request" });
   }
 };
 
-const getRequestsByUser = async (req, res) => {
+const saveRequest = async (req,res) => {
+  const {name, method, url, body, headers } = req.body;
   const userId = req.user.id;
 
-  try {
-    //console.log("Fetching requests for user:", userId);
-    if (!Request) {
-      console.error("Request model is undefined");
-      return res.status(500).json({ error: "Request model not found" });
-    }
 
-    const requests = await Request.findAll({ where: { userId } });
-    res.status(200).json(requests);
-  } catch (error) {
-    console.error("Error fetching requests:", error);
-    res.status(500).json({ error: "Error fetching requests" });
+  try{
+
+    const newRequest = await TestCase.create({
+      name,
+      method,
+      url,
+      headers: JSON.stringify(headers),
+      body: JSON.stringify(body),
+      userId,
+      status: "pending",
+    });
+
+    return res.status(201).json({ message: "TestCase saved successfully" });
+
+  }catch(error){
+    console.error("Error processing request:", error);
+    res.status(500).json({ error: "Error processing request" });
   }
-};
+
+  
+}
+
 
 module.exports = {
   createRequest,
-  getRequestsByUser,
+  saveRequest,
 };

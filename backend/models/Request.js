@@ -8,6 +8,10 @@ const Request = sequelize.define("Request", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  name:{
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   url: {
     type: DataTypes.STRING,
     allowNull: false,
