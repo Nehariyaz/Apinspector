@@ -77,9 +77,10 @@ const createRequest = async (req, res) => {
 };
 
 const saveRequest = async (req,res) => {
-  const {name, method, url, body, headers } = req.body;
+  const {name, method, url, queryParams,headers, body } = req.body;
   const userId = req.user.id;
 
+  console.log("Query Params:", queryParams);
 
   try{
 
@@ -87,8 +88,9 @@ const saveRequest = async (req,res) => {
       name,
       method,
       url,
-      headers: JSON.stringify(headers),
-      body: JSON.stringify(body),
+      queryParams: JSON.stringify(queryParams || []),
+      headers: JSON.stringify(headers || []),
+      body: JSON.stringify(body || []),
       userId,
       status: "pending",
     });

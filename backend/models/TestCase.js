@@ -1,24 +1,27 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
-
 const TestCase = sequelize.define("TestCase", {
   id: { 
     type: DataTypes.UUID, 
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true 
   },
-  method: {
+  name: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  name:{
+  method: {
     type: DataTypes.STRING,
     allowNull: false,
   },
   url: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  queryParams: {                
+    type: DataTypes.JSON,
+    allowNull: true,
   },
   headers: {
     type: DataTypes.JSON,

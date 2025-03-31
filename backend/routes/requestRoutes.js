@@ -6,7 +6,7 @@ const {authMiddleware}= require("../middlewares/authMiddleware");
 
 // Protected routes
 router.post("/request", authMiddleware, createRequest);
-router.get("/requestSave", authMiddleware,saveRequest);
+router.post("/requestSave", authMiddleware,saveRequest);
 
 
 
