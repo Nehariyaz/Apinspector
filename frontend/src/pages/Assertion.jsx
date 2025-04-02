@@ -11,7 +11,8 @@ const Assertion = () => {
     testCase: '',
     assertionType: '',
     condition: '',
-    expectedValue: ''
+    expectedValue: '',
+    receivedValue: '-' // Added receivedValue field
   });
 
   const [editingIndex, setEditingIndex] = useState(null);
@@ -22,21 +23,55 @@ const Assertion = () => {
     setNewAssertion({ ...newAssertion, [name]: value });
   };
 
+  // Mock function to simulate getting API response value
+  const getReceivedValue = (assertion) => {
+    // In a real implementation, this would come from your API response
+    // For demo purposes, we'll return some mock values
+    switch(assertion.assertionType) {
+      case 'Status Code':
+        return '200';
+      case 'Header':
+        return 'application/json';
+      case 'Response Body':
+        return '{"status":"success"}';
+      case 'Response Time':
+        return '150ms';
+      default:
+        return '-';
+    }
+  };
+
   const handleCreateAssertion = () => {
-    if (!newAssertion.testCase || !newAssertion.assertionType || !newAssertion.condition || !newAssertion.expectedValue) {
-      alert("Please fill in all fields");
+    if (!newAssertion.testCase || !newAssertion.assertionType || 
+        !newAssertion.condition || !newAssertion.expectedValue) {
+      alert("Please fill in all required fields");
       return;
     }
 
+    // Get received value from API (mock implementation)
+    const receivedValue = getReceivedValue(newAssertion);
+
+    const assertionToAdd = {
+      ...newAssertion,
+      receivedValue: receivedValue
+    };
+
     if (editingIndex !== null) {
       const updatedAssertions = [...assertions];
-      updatedAssertions[editingIndex] = newAssertion;
+      updatedAssertions[editingIndex] = assertionToAdd;
       setAssertions(updatedAssertions);
       setEditingIndex(null);
     } else {
-      setAssertions([...assertions, newAssertion]);
+      setAssertions([...assertions, assertionToAdd]);
     }
-    setNewAssertion({ testCase: '', assertionType: '', condition: '', expectedValue: '' });
+
+    setNewAssertion({ 
+      testCase: '', 
+      assertionType: '', 
+      condition: '', 
+      expectedValue: '',
+      receivedValue: '-' 
+    });
     setShowForm(false);
   };
 
@@ -55,7 +90,13 @@ const Assertion = () => {
   };
 
   const handleCancelEdit = () => {
-    setNewAssertion({ testCase: '', assertionType: '', condition: '', expectedValue: '' });
+    setNewAssertion({ 
+      testCase: '', 
+      assertionType: '', 
+      condition: '', 
+      expectedValue: '',
+      receivedValue: '-' 
+    });
     setEditingIndex(null);
     setShowForm(false);
   };
@@ -162,36 +203,50 @@ const Assertion = () => {
                       <th>Assertion Type</th>
                       <th>Condition</th>
                       <th>Expected Value</th>
+                      <th>Received Value</th> {/* Added Received Value column */}
+                      <th>Status</th> {/* Added Status column */}
                       <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {assertions.map((assertion, index) => (
-                      <tr key={index}>
-                        <td>{assertion.testCase}</td>
-                        <td>
-                          <span className="assertion-badge">{assertion.assertionType}</span>
-                        </td>
-                        <td>{assertion.condition}</td>
-                        <td>{assertion.expectedValue}</td>
-                        <td className="action-buttons">
-                          <button 
-                            className="edit-button" 
-                            onClick={() => handleEditAssertion(index)}
-                            title="Edit"
-                          >
-                            <i className="fa fa-edit"></i>Edit
-                          </button>
-                          <button 
-                            className="delete-button" 
-                            onClick={() => handleDeleteAssertion(index)}
-                            title="Delete"
-                          >
-                            <i className="fa fa-trash"></i>Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
+                    {assertions.map((assertion, index) => {
+                      // Determine if the assertion passed
+                      const isPassed = assertion.receivedValue !== '-' && 
+                                      assertion.expectedValue === assertion.receivedValue;
+                      
+                      return (
+                        <tr key={index}>
+                          <td>{assertion.testCase}</td>
+                          <td>
+                            <span className="assertion-badge">{assertion.assertionType}</span>
+                          </td>
+                          <td>{assertion.condition}</td>
+                          <td>{assertion.expectedValue}</td>
+                          <td>{assertion.receivedValue}</td>
+                          <td>
+                            <span className={`status-badge ${isPassed ? 'passed' : 'failed'}`}>
+                              {isPassed ? '✓ Passed' : '✗ Failed'}
+                            </span>
+                          </td>
+                          <td className="action-buttons">
+                            <button 
+                              className="edit-button" 
+                              onClick={() => handleEditAssertion(index)}
+                              title="Edit"
+                            >
+                              <i className="fa fa-edit"></i>Edit
+                            </button>
+                            <button 
+                              className="delete-button" 
+                              onClick={() => handleDeleteAssertion(index)}
+                              title="Delete"
+                            >
+                              <i className="fa fa-trash"></i>Delete
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>

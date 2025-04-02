@@ -261,6 +261,22 @@ body {
   margin-bottom: 24px;
 }
 
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-badge.passed {
+  background-color: #e6f7e6;
+  color: #2e7d32;
+}
+
+.status-badge.failed {
+  background-color: #ffebee;
+  color: #c62828;
+}
 /* Responsive Adjustments */
 @media (max-width: 992px) {
   .assertion-form {
