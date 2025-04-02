@@ -20,13 +20,19 @@ stages:
   - test
   - deploy
 
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - backend/node_modules/
+    - frontend/node_modules/
+
 before_script:
-  - apt-get update && apt-get install -y postgresql-client netcat-traditional  # Install PostgreSQL client globally for all jobs
+  - apt-get update && apt-get install -y postgresql-client netcat-traditional
   - echo "Waiting for PostgreSQL..."
   - |
     until pg_isready -h $DB_HOST -p $DB_PORT -U $POSTGRES_USER; do
-      echo "PostgreSQL is unavailable - sleeping"
       sleep 2
+      echo "Waiting for PostgreSQL..."
     done
   - echo "PostgreSQL is ready!"
 
@@ -34,7 +40,10 @@ install_dependencies_backend:
   stage: install
   script:
     - cd backend
-    - npm install
+    - npm ci --prefer-offline
+  artifacts:
+    paths:
+      - backend/node_modules/
   only:
     - main
 
@@ -42,7 +51,10 @@ install_dependencies_frontend:
   stage: install
   script:
     - cd frontend
-    - npm install
+    - npm ci --prefer-offline
+  artifacts:
+    paths:
+      - frontend/node_modules/
   only:
     - main
 
@@ -50,8 +62,17 @@ run_tests_backend:
   stage: test
   script:
     - cd backend
-    - npx sequelize-cli db:migrate  # Run migrations before tests
-    - npx jest --runInBand --detectOpenHandles
+    - npm install -g sequelize-cli
+    - npx sequelize-cli db:migrate
+    - npx jest --runInBand --detectOpenHandles --coverage
+  artifacts:
+    when: always
+    reports:
+      junit: backend/junit.xml
+    paths:
+      - backend/coverage/
+  dependencies:
+    - install_dependencies_backend
   only:
     - main
 
@@ -59,8 +80,9 @@ run_tests_frontend:
   stage: test
   script:
     - cd frontend
-    - npm install
-    - npm test || echo "No tests available, skipping..."
+    - npm test || echo "Frontend tests not configured, skipping..."
+  dependencies:
+    - install_dependencies_frontend
   only:
     - main
 
