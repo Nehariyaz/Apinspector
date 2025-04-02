@@ -20,6 +20,16 @@ stages:
   - test
   - deploy
 
+before_script:
+  - apt-get update && apt-get install -y postgresql-client netcat-traditional  # Install PostgreSQL client globally for all jobs
+  - echo "Waiting for PostgreSQL..."
+  - |
+    until pg_isready -h $DB_HOST -p $DB_PORT -U $POSTGRES_USER; do
+      echo "PostgreSQL is unavailable - sleeping"
+      sleep 2
+    done
+  - echo "PostgreSQL is ready!"
+
 install_dependencies_backend:
   stage: install
   script:
@@ -38,19 +48,9 @@ install_dependencies_frontend:
 
 run_tests_backend:
   stage: test
-  before_script:
-    - apt-get update && apt-get install -y postgresql-client netcat-traditional
-    - echo "Waiting for PostgreSQL..."
-    - |
-      until pg_isready -h $DB_HOST -p $DB_PORT -U $POSTGRES_USER; do
-        echo "PostgreSQL is unavailable - sleeping"
-        sleep 2
-      done
-    - echo "PostgreSQL is ready!"
-    - cd backend
-    - npm install
-    - npx sequelize-cli db:migrate  
   script:
+    - cd backend
+    - npx sequelize-cli db:migrate  # Run migrations before tests
     - npx jest --runInBand --detectOpenHandles
   only:
     - main
@@ -60,7 +60,7 @@ run_tests_frontend:
   script:
     - cd frontend
     - npm install
-    - npm test || echo "No tests available, skipping..."  
+    - npm test || echo "No tests available, skipping..."
   only:
     - main
 

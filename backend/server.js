@@ -21,7 +21,11 @@ const databaseHost = isDocker ? 'postgres_db' : DB_HOST;
 
 console.log(`Connecting to database at: ${databaseHost}`);
 
-
+if (process.env.NODE_ENV !== 'test') {
+  sequelize.authenticate()
+    .then(() => console.log(`Connecting to database at: ${sequelize.config.host}`))
+    .catch(err => console.error('Database connection failed:', err));
+}
 const app = express();
 
 // CORS Configuration
@@ -76,10 +80,17 @@ async function startServer() {
   }
 }
 
-// Start server only in non-test environments
-if (process.env.NODE_ENV !== "test") {
-  startServer();
+
+// Only start server if not in test environment
+if (process.env.NODE_ENV !== 'test') {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
+
+
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "OK" });
+});
 
 // Export app for testing
 module.exports = app;
