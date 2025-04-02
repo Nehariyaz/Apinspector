@@ -1,9 +1,9 @@
 const jwt = require("jsonwebtoken");
 
 const authMiddleware = (req, res, next) => {
-  console.log("Headers:", req.headers);
+  
   const authHeader = req.headers.authorization;
-  console.log("token: ",authHeader);
+  //console.log("token: ",authHeader);
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({ error: "Unauthorized - Missing or invalid token" });

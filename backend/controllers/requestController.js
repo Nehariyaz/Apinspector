@@ -80,7 +80,7 @@ const saveRequest = async (req,res) => {
   const {name, method, url, queryParams,headers, body } = req.body;
   const userId = req.user.id;
 
-  console.log("Query Params:", queryParams);
+  //console.log("Query Params:", queryParams);
 
   try{
 

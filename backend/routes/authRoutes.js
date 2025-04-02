@@ -1,14 +1,10 @@
 const axios= require("axios")
 const express = require("express");
-//const { register, login, logout, dashboard, forgotpassword, resetPassword  } = require("../controllers/authController");
 const { authMiddleware } = require("../middlewares/authMiddleware");
 const {register,login,forgotpassword,resetPassword,logout,dashboard,verifyOtp,resendOtp} = require("../controllers/authController");
 const router = express.Router();
 
-//console.log("Register function:", register);
 
-// router.get("/login", (req, res) => res.render("login",{message:null}));
-// router.get("/register", (req, res) => res.render("register"));
 router.post("/register", register);
 router.post("/forgot-password",forgotpassword);
 router.post("/reset-password/:token", resetPassword);

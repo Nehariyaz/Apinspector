@@ -1,11 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const testCaseController = require("../controllers/testCaseController");
+const { getTestCase, createTestCase, updateTestCase, deleteTestCase } = require("../controllers/testCaseController");
+const {authMiddleware} = require("../middlewares/authMiddleware");
 
-router.post("/", testCaseController.createTestCase);
-router.get("/", testCaseController.getAllTestCases);
-router.put("/:id", testCaseController.updateTestCase);
-router.delete("/:id", testCaseController.deleteTestCase);
-router.post("/:id/execute", testCaseController.executeTestCase);
+router.get("/", authMiddleware, getTestCase);
+router.post("/", authMiddleware, createTestCase);
+router.put("/:id", authMiddleware, updateTestCase);
+router.delete("/:id", authMiddleware, deleteTestCase);
 
 module.exports = router;

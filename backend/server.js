@@ -5,6 +5,7 @@ const session = require("express-session");
 const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
 const requestRoutes = require("./routes/requestRoutes");
+const testCaseRoute = require("./routes/testCaseRoute");
 const { sequelize, User, Request } = require("./models");
 //const sequelize = require("./config/database");
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
@@ -46,7 +47,7 @@ app.use(session({
 // API Routes
 app.use("/", authRoutes);
 app.use("/", requestRoutes);
-
+app.use("/test-cases", testCaseRoute);
 
 app.use((err, req, res, next) => {
   console.error("Internal Server Error:", err);

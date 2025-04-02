@@ -30,26 +30,20 @@ const verifyCaptcha = async (captchaToken) => {
 // User Registration
 exports.register = async (req, res) => {
     try {
-        console.log("Incoming Registration Request:", req.body);
-
-        //console.log("Incoming Request Body:", JSON.stringify(req.body, null, 2));
         
         const { username, email, password, captchaToken } = req.body;
         
         if (!req.body || Object.keys(req.body).length === 0) {
-            console.log("this is empty req body");
             return res.status(400).json({ message: "Request body is missing or empty" });
         }
 
         if (!captchaToken || !(await verifyCaptcha(captchaToken))) {
-            console.log("captcha verified");
             return res.status(403).json({ message: "reCAPTCHA failed, please try again" });
         }
 
         const userExist = await User.findOne({ where: { email } });
         
         if (userExist) {
-            console.log("User exists");
             return res.status(409).json({ message: "User already exists" });
         }
 
@@ -63,7 +57,7 @@ exports.register = async (req, res) => {
             return res.status(500).json({ message: "User registered, but email failed to send" });
         }
 
-        console.log("Hello");
+       
         return res.status(201).json({ message: "User registered successfully" });
         
     } catch (err) {
@@ -108,7 +102,7 @@ exports.login = async (req, res) => {
 
     
         const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-        console.log("Token: ", token);
+        //console.log("Token: ", token);
 
         
         return res.status(200).json({ message: "Login successful", token, username });
@@ -210,13 +204,13 @@ exports.forgotpassword = async (req, res) => {
 exports.resetPassword = async (req, res) => {
     try {
         const { token } = req.body;
-        console.log("Token from params:", req.params.token);
-console.log("Full request params:", req.params);
+        //console.log("Token from params:", req.params.token);
+//console.log("Full request params:", req.params);
 
         const { password } = req.body;
 
-        console.log("Password from request:", password);
-        console.log("Token from request:", token);
+        //console.log("Password from request:", password);
+        //console.log("Token from request:", token);
 
 
         const user = await User.findOne({
