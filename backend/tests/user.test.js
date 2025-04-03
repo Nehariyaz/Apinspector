@@ -2,6 +2,8 @@ const request = require('supertest');
 const app = require('../server'); // Make sure this path is correct
 const { User, sequelize } = require('../models');
 
+
+
 beforeAll(async () => {
   // Initialize database
   await sequelize.sync({ force: true });

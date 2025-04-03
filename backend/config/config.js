@@ -18,12 +18,12 @@ module.exports = {
     logging: process.env.NODE_ENV === "development" ? console.log : false
     },
     test: {
-        username: process.env.DB_TEST_USER ,
-        password: process.env.DB_TEST_PASSWORD ,
-        database: process.env.DB_TEST_NAME ,
-        host: process.env.DB_HOST || 'localhost',
-        port: process.env.DB_PORT || 5432,
-        dialect: 'postgres',
+      username: process.env.DB_USER || 'postgres', 
+      password: process.env.DB_PASSWORD || 'postgres',
+      database: process.env.DB_NAME || 'test_db',
+      host: process.env.DB_HOST || 'postgres',
+      port: process.env.DB_PORT || 5432,
+      dialect: 'postgres',
         dialectOptions: {
           authentication: {
             type: "md5"
