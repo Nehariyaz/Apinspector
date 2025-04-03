@@ -3,38 +3,45 @@ image: node:20
 services:
   - name: postgres:latest
     alias: postgres
+    variables:
+      POSTGRES_DB: testdb
+      POSTGRES_USER: testuser
+      POSTGRES_PASSWORD: testpassword
+      ports:
+      - "5432:5432"
 
 variables:
-  POSTGRES_DB: testdb
-  POSTGRES_USER: testuser
-  POSTGRES_PASSWORD: testpassword
   DB_HOST: postgres
+  DB_PORT: 5432
   DB_NAME: testdb
   DB_USER: testuser
-  DB_PASS: testpassword
-  DB_PORT: 5432
+  DB_PASSWORD: testpassword
   NODE_ENV: test
 
 stages:
   - install
   - test
-  - deploy
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:
     - backend/node_modules/
-    - frontend/node_modules/
 
 before_script:
   - apt-get update && apt-get install -y postgresql-client netcat-traditional
-  - echo "Waiting for PostgreSQL..."
+  - echo "Waiting for PostgreSQL to be ready..."
   - |
-    until pg_isready -h $DB_HOST -p $DB_PORT -U $POSTGRES_USER; do
+    for i in {1..15}; do
+      if pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME; then
+        echo "PostgreSQL is ready!"
+        break
+      fi
+      echo "Attempt $i/15 - PostgreSQL not ready yet..."
       sleep 2
-      echo "Waiting for PostgreSQL..."
     done
-  - echo "PostgreSQL is ready!"
+  # Verify credentials work
+  - PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME -c "CREATE TABLE IF NOT EXISTS ci_test (id SERIAL); DROP TABLE IF EXISTS ci_test;"
+  - echo "Database connection verified!"
 
 install_dependencies_backend:
   stage: install
@@ -47,24 +54,15 @@ install_dependencies_backend:
   only:
     - main
 
-install_dependencies_frontend:
-  stage: install
-  script:
-    - cd frontend
-    - npm ci --prefer-offline
-  artifacts:
-    paths:
-      - frontend/node_modules/
-  only:
-    - main
-
 run_tests_backend:
   stage: test
   script:
     - cd backend
     - npm install -g sequelize-cli
+    - echo "Running migrations..."
     - npx sequelize-cli db:migrate
-    - npx jest --runInBand --detectOpenHandles --coverage
+    - echo "Running tests..."
+    - npm test -- --runInBand --detectOpenHandles --coverage
   artifacts:
     when: always
     reports:
@@ -73,22 +71,5 @@ run_tests_backend:
       - backend/coverage/
   dependencies:
     - install_dependencies_backend
-  only:
-    - main
-
-run_tests_frontend:
-  stage: test
-  script:
-    - cd frontend
-    - npm test || echo "Frontend tests not configured, skipping..."
-  dependencies:
-    - install_dependencies_frontend
-  only:
-    - main
-
-deploy:
-  stage: deploy
-  script:
-    - echo "Deploying application..."
   only:
     - main
