@@ -67,17 +67,20 @@ async function startServer() {
 
 app.get("/health", async (req, res) => {
   try {
+    // Verify database connection
     await sequelize.authenticate();
-    res.status(200).json({ 
-      status: "OK",  // Changed from "ok" to "OK"
+    
+    res.status(200).json({
+      status: "OK",
       database: "connected",
-      environment: process.env.NODE_ENV || 'development'
+      timestamp: new Date().toISOString()
     });
   } catch (err) {
-    res.status(500).json({ 
-      status: "ERROR", 
+    console.error("Health check failed:", err);
+    res.status(500).json({
+      status: "ERROR",
       database: "disconnected",
-      error: err.message
+      error: err.message  // Include error details for debugging
     });
   }
 });
