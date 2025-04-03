@@ -11,6 +11,8 @@ const TestCase = () => {
   const [testCases, setTestCases] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [tokenExpired, setTokenExpired] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [response, setResponse] = useState('');
   const [newTestCase, setNewTestCase] = useState({
     name: '',
     method: 'GET',
