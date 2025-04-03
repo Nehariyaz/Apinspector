@@ -17,8 +17,7 @@ const ResetPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    console.log("hellooooo");
-    console.log("Token before sending request:", token);
+    
       
     if (!token) {
       setError("Invalid or missing token."); // Ensure token is present

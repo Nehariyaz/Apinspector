@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Save, Play, X } from "lucide-react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/Request.css";
+import { useNavigate, Link } from "react-router-dom";
 import VerticalNavbar from "../components/VerticalNavbar";
 import HorizontalNavbar from "../components/HorizontalNavbar"; 
 import axios from "axios";
@@ -9,13 +10,14 @@ import xmlFormatter from 'xml-formatter';
 
 const Request = () => {
   
-  const [method, setMethod] = useState("");
+  const [method, setMethod] = useState("GET");
   const [url, setUrl] = useState("");
   const [contentType, setContentType] = useState("application/json");
-  const [requestBody, setRequestBody] = useState('{\n  "key": "value"\n}');
+  const [requestBody, setRequestBody] = useState('{}');
   const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
   const [requestName, setRequestName] = useState(""); 
+  
   
   // Data for tables - now always visible
   const [queryParams, setQueryParams] = useState([
@@ -81,6 +83,7 @@ const Request = () => {
     if (!token) {
       alert('Session timed out! Please log in again.');
       setLoading(false);
+      
       return;
     }
     setLoading(true);
@@ -165,12 +168,38 @@ const Request = () => {
     }
   };
 
-  const handleSaveRequest = async () => {
-    if (!requestName) {
-      alert("Please enter a request name.");
+  const saveTestCase = async () => {
+    if (!requestName.trim()) {
+      alert("Please enter a test case name");
       return;
     }
+  
+    const saveData = {
+      name: requestName,
+      method,
+      url,
+      queryParams: queryParams.filter(param => param.key && param.value),
+      headers: headers.filter(header => header.key && header.value),
+      body: requestBody,
+      contentType
+    };
+  
+    const appHeaders = {
+      "Authorization": `Bearer ${localStorage.getItem("token")}`,
+      "Content-Type": "application/json",
+    };
+  
+    try {
+      const res = await axios.post("http://localhost:3000/test-cases", saveData, { headers: appHeaders });
+      console.log("Test case saved:", res.data);
+      alert("Test case saved successfully!");
+    } catch (error) {
+      console.error("Error saving test case:", error);
+      alert("Failed to save test case");
+    }
   };
+  
+
 
   // Table handlers
   const handleItemChange = (index, field, value, setter, items) => {
@@ -211,7 +240,8 @@ return (
                 onChange={(e) => setRequestName(e.target.value)}
               />
               <div className="button-group d-flex">
-                <button className="save btn me-2">
+                <button className="save btn me-2" onClick={saveTestCase} 
+                  disabled={loading}>
                   <Save size={16} />
                   Save
                 </button>

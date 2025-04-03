@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "@/styles/TestCase.css";
+import axios from "axios";
 import "@/styles/VerticalNavbar.css";
 import "@/styles/HorizontalNavbar.css";
 import VerticalNavbar from "../components/VerticalNavbar";
@@ -9,6 +10,7 @@ import HorizontalNavbar from "../components/HorizontalNavbar";
 const TestCase = () => {
   const [testCases, setTestCases] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [tokenExpired, setTokenExpired] = useState(false);
   const [newTestCase, setNewTestCase] = useState({
     name: '',
     method: 'GET',
@@ -18,20 +20,48 @@ const TestCase = () => {
     body: '',
   });
 
-  // Debug logging
-  useEffect(() => {
-    console.log("Current test cases:", testCases);
-  }, [testCases]);
+  
 
-  // Open the modal
+  useEffect(() => {
+
+
+
+    const fetchTestCases = async () => {
+      
+      try {
+        const response = await axios.get("http://localhost:3000/test-cases", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+  
+        console.log("Full Response:", response);  
+        console.log("Fetched test cases:", response.data);
+
+        const normalizedTestCases = response.data.map(testCase => ({
+          ...testCase,
+          headers: Array.isArray(testCase.headers) ? testCase.headers : [],
+          queryParams: Array.isArray(testCase.queryParams) ? testCase.queryParams : JSON.parse(testCase.queryParams || '[]'),
+        }));
+        setTestCases(normalizedTestCases);
+
+        
+      } catch (error) {
+        console.error("Error fetching test cases:", error); // Line 54
+      }
+    };
+  
+    fetchTestCases();
+  }, []);
+
   const openModal = () => {
     setShowModal(true);
   };
 
-  // Close the modal
   const closeModal = () => {
     setShowModal(false);
-    // Reset the form
     setNewTestCase({
       name: '',
       method: 'GET',
@@ -42,26 +72,22 @@ const TestCase = () => {
     });
   };
 
-  // Handle input changes in the modal form
   const handleInputChange = (field, value) => {
     setNewTestCase({ ...newTestCase, [field]: value });
   };
 
-  // Handle query parameter changes
   const handleQueryParamChange = (paramIndex, field, value) => {
     const updatedQueryParams = [...newTestCase.queryParams];
     updatedQueryParams[paramIndex][field] = value;
     setNewTestCase({ ...newTestCase, queryParams: updatedQueryParams });
   };
 
-  // Handle header changes
   const handleHeaderChange = (headerIndex, field, value) => {
     const updatedHeaders = [...newTestCase.headers];
     updatedHeaders[headerIndex][field] = value;
     setNewTestCase({ ...newTestCase, headers: updatedHeaders });
   };
 
-  // Add a new query parameter field
   const addQueryParam = () => {
     setNewTestCase({
       ...newTestCase,
@@ -69,7 +95,6 @@ const TestCase = () => {
     });
   };
 
-  // Remove a query parameter field
   const removeQueryParam = (paramIndex) => {
     if (newTestCase.queryParams.length > 1) {
       const updatedQueryParams = newTestCase.queryParams.filter((_, index) => index !== paramIndex);
@@ -77,7 +102,6 @@ const TestCase = () => {
     }
   };
 
-  // Add a new header field
   const addHeader = () => {
     setNewTestCase({
       ...newTestCase,
@@ -85,7 +109,6 @@ const TestCase = () => {
     });
   };
 
-  // Remove a header field
   const removeHeader = (headerIndex) => {
     if (newTestCase.headers.length > 1) {
       const updatedHeaders = newTestCase.headers.filter((_, index) => index !== headerIndex);
@@ -93,33 +116,70 @@ const TestCase = () => {
     }
   };
 
-  // Save the new test case
-  const saveTestCase = () => {
-    // Basic validation
+  const saveTestCase = async () => {
+
     if (!newTestCase.name.trim()) {
       alert("Please enter a test case name");
       return;
     }
-
-    // Add timestamp for unique identification
-    const testCaseWithId = {
-      ...newTestCase,
-      id: Date.now(),
-      createdAt: new Date().toLocaleString()
+  
+    const saveData = {
+      name: newTestCase.name,
+      method: newTestCase.method,
+      url: newTestCase.url,
+      queryParams: newTestCase.queryParams.filter(param => param.key && param.value),
+      headers: newTestCase.headers.filter(header => header.key && header.value),
+      body: newTestCase.body,
     };
+  
+    const appHeaders = {
+      "Authorization": `Bearer ${localStorage.getItem("token")}`, 
+      "Content-Type": "application/json",
+    };
+  
+    try {
+      const res = await axios.post("http://localhost:3000/test-cases", saveData, { headers: appHeaders });
+      console.log("Test case saved:", res.data);
+      setTestCases([...testCases, res.data]); 
+      closeModal();
+    } catch (error) {
+      console.error("Error saving test case:", error);
+      alert("Failed to save test case");
+    }
     
-    console.log("Saving test case:", testCaseWithId); // Debug log
-    setTestCases([...testCases, testCaseWithId]);
-    closeModal();
-  };
+   };
 
-  // Send a test case
+  const deleteTestCase = async (id,index) => {
+    const stringId = String(id).trim(); 
+
+    console.log("Deleting test case with ID:", stringId, "Type:", typeof stringId);
+  
+    if (!/^[0-9a-fA-F-]{36}$/.test(stringId)) {
+      console.error("Invalid ID:", stringId);
+      alert("Invalid test case ID");
+      return;
+    }
+
+  const appHeaders = {
+    "Authorization": `Bearer ${localStorage.getItem("token")}`, 
+    "Content-Type": "application/json",
+  };
+  console.log("Deleting test case with ID:", id);
+
+  try {
+    await axios.delete(`http://localhost:3000/test-cases/${stringId}`, { headers: appHeaders });
+    setTestCases((prevTestCases) => prevTestCases.filter((testCase) => testCase.id !== stringId));
+  } catch (error) {
+    console.error("Error deleting test case:", error);
+    alert("Failed to delete test case");
+  }
+};
+
+
   const sendTestCase = (index) => {
     console.log('Sending test case:', testCases[index]);
-    // Add visual feedback here in a real app
   };
 
-  // Get appropriate method badge color
   const getMethodColor = (method) => {
     switch (method) {
       case 'GET': return 'method-get';
@@ -235,7 +295,7 @@ const TestCase = () => {
                         <div className="d-flex gap-2">
                           <button
                             className="btn btn-danger btn-sm"
-                            onClick={() => setTestCases(testCases.filter((_, i) => i !== index))}
+                            onClick={() => deleteTestCase(testCase.id, index)}
                           >
                             Delete
                           </button>

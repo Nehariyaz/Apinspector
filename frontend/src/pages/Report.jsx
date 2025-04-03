@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import axios from 'axios';
 import VerticalNavbar from "../components/VerticalNavbar";
 import HorizontalNavbar from "../components/HorizontalNavbar";
 import { FaCalendarAlt, FaDownload, FaEye, FaCheckCircle, FaTimesCircle, FaChartPie } from 'react-icons/fa';
@@ -8,41 +9,52 @@ import "../styles/Report.css";
 const Report = () => {
   const [startDate, setStartDate] = useState('2025-03-01');
   const [endDate, setEndDate] = useState('2025-03-13');
-  const [successRate, setSuccessRate] = useState('78%');
-  const [testsPassed, setTestsPassed] = useState(125);
-  const [testsFailed, setTestsFailed] = useState(35);
-  const [recentRuns, setRecentRuns] = useState([
-    { id: 'RUN-1023', date: '03/13/2025', tests: '35/40', passRate: '87.5%', duration: '2m 43s' },
-    { id: 'RUN-1022', date: '03/12/2025', tests: '38/40', passRate: '95.0%', duration: '2m 38s' },
-    { id: 'RUN-1021', date: '03/11/2025', tests: '33/40', passRate: '82.5%', duration: '2m 55s' },
-    { id: 'RUN-1020', date: '03/10/2025', tests: '37/40', passRate: '92.5%', duration: '2m 41s' }
-  ]);
+  const [successRate, setSuccessRate] = useState('0%');
+  const [testsPassed, setTestsPassed] = useState(0);
+  const [testsFailed, setTestsFailed] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  
 
   useEffect(() => {
-    // Replace with actual API call or data fetching logic
-    const fetchData = async () => {
-      try {
-        // Example: Fetch data based on the selected date range
-        const response = await fetch(`/api/report?startDate=${startDate}&endDate=${endDate}`);
-        const data = await response.json();
-
-        // Update state with fetched data
-        setSuccessRate(data.successRate);
-        setTestsPassed(data.testsPassed);
-        setTestsFailed(data.testsFailed);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        // Handle error state
-      }
-    };
-
-    // Comment out fetchData call for now to avoid actual API calls during development
-    // fetchData();
+    
   }, [startDate, endDate]);
+  
+    const fetchReportData = async () => {
+      setLoading(true);
+    setError(null);
+
+    try {
+      const response = await axios.get(`http://localhost:3000/report?startDate=${startDate}&endDate=${endDate}`,{  
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if(response.status==200){
+        alert ("No tests run in the given dates");
+        return
+      }
+      const data = await response.json();
+
+      setSuccessRate(data.successRate);
+      setTestsPassed(data.testsPassed);
+      setTestsFailed(data.testsFailed);
+    } catch (err) {
+      console.error("Error fetching report:", err);
+      setError("Failed to load report data. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+    
 
   const handleApply = () => {
-    // Logic to filter or fetch data based on the selected date range
-    console.log('Applying date range:', startDate, 'to', endDate);
+   
+      fetchReportData();
+   
   };
 
   const handleExport = () => {
@@ -130,40 +142,7 @@ const Report = () => {
             </div>
           </section>
 
-          <section className="recent-runs-section">
-            <h2>Recent Test Runs</h2>
-            <div className="table-responsive">
-              <table className="runs-table">
-                <thead>
-                  <tr>
-                    <th>Run ID</th>
-                    <th>Date</th>
-                    <th>Tests</th>
-                    <th>Pass Rate</th>
-                    <th>Duration</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {recentRuns.map(run => (
-                    <tr key={run.id}>
-                      <td className="run-id">{run.id}</td>
-                      <td>{run.date}</td>
-                      <td>{run.tests}</td>
-                      <td className="pass-rate">{run.passRate}</td>
-                      <td>{run.duration}</td>
-                      <td>
-                        <button className="view-btn" onClick={() => handleViewRun(run.id)}>
-                          <FaEye /> View
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
-        </main>
+          </main>
       </div>
     </div>
   );

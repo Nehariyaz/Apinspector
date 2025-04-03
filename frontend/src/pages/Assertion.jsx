@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import "@/styles/Assertion.css";
 import "@/styles/VerticalNavbar.css";
+import axios from 'axios';
 import "@/styles/HorizontalNavbar.css";
 import VerticalNavbar from "../components/VerticalNavbar";
 import HorizontalNavbar from "../components/HorizontalNavbar";
+import { useEffect } from "react";
+
 
 const Assertion = () => {
   const [assertions, setAssertions] = useState([]);
+  const [testCases, setTestCases] = useState([]);
   const [newAssertion, setNewAssertion] = useState({
-    testCase: '',
+    testCaseId: '',
     assertionType: '',
     condition: '',
     expectedValue: '',
@@ -17,6 +21,52 @@ const Assertion = () => {
 
   const [editingIndex, setEditingIndex] = useState(null);
   const [showForm, setShowForm] = useState(false);
+
+
+
+  useEffect(() => {
+    const fetchTestCases = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/test-cases", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+  
+        console.log("Fetched testCases:", response.data);
+  
+        if (response.data.length > 0) {
+          setTestCases(response.data);
+          setNewAssertion((prev) => ({
+            ...prev,
+            testCaseId: prev.testCaseId || response.data[0].id, // Only set if not already set
+          }));
+        }
+      } catch (error) {
+        console.error("Error fetching test cases:", error);
+      }
+    };
+  
+    const fetchAssertions = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/assertions", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+  
+        console.log("Fetched Assertions:", response.data);
+        setAssertions(response.data);
+      } catch (error) {
+        console.error("Error fetching assertions:", error);
+      }
+    };
+  
+    fetchTestCases();
+    fetchAssertions();
+  }, []); 
+  
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -41,56 +91,137 @@ const Assertion = () => {
     }
   };
 
-  const handleCreateAssertion = () => {
-    if (!newAssertion.testCase || !newAssertion.assertionType || 
+  const handleCreateAssertion = async () => {
+    if (!newAssertion.testCaseId || !newAssertion.assertionType || 
         !newAssertion.condition || !newAssertion.expectedValue) {
-      alert("Please fill in all required fields");
-      return;
+        console.log(newAssertion.testCaseId);
+        alert("Please fill in all required fields");
+        return;
     }
 
-    // Get received value from API (mock implementation)
-    const receivedValue = getReceivedValue(newAssertion);
+    try {
+        const response = await fetch(`http://localhost:3000/test-cases/${newAssertion.testCaseId}/assertions`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`, // Assuming token-based auth
+            },
+            body: JSON.stringify({
+                testCaseId: newAssertion.testCaseId, 
+                assertionType: newAssertion.assertionType,
+                condition: newAssertion.condition,
+                expectedValue: newAssertion.expectedValue
+            }),
+        });
+        console.log("Creating Assertion with:", newAssertion);
+        if (!response.ok) {
+            throw new Error("Failed to create assertion");
+        }
 
-    const assertionToAdd = {
-      ...newAssertion,
-      receivedValue: receivedValue
-    };
+        const createdAssertion = await response.json();
 
-    if (editingIndex !== null) {
-      const updatedAssertions = [...assertions];
-      updatedAssertions[editingIndex] = assertionToAdd;
-      setAssertions(updatedAssertions);
-      setEditingIndex(null);
-    } else {
-      setAssertions([...assertions, assertionToAdd]);
+        // Update UI with new assertion including received value and status
+        setAssertions([...assertions, createdAssertion]);
+
+        setNewAssertion({ 
+            testCase: '', 
+            assertionType: '', 
+            condition: '', 
+            expectedValue: '',
+            receivedValue: '-' 
+        });
+        setShowForm(false);
+
+    } catch (error) {
+        console.error("Error creating assertion:", error);
+        alert("Error creating assertion");
     }
+};
 
-    setNewAssertion({ 
-      testCase: '', 
-      assertionType: '', 
-      condition: '', 
-      expectedValue: '',
-      receivedValue: '-' 
+const handleDeleteAssertion = async (id) => {
+  console.log("Attempting to delete assertion with ID:", id);
+  if (window.confirm("Are you sure you want to delete this assertion?")) {
+      try {
+          const response = await axios.delete(`http://localhost:3000/assertions/${id}`, {
+              headers: {
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+          });
+
+          if (response.status === 200) { 
+            setAssertions(assertions.filter(assertion => assertion.id !== id));
+        } else {
+            throw new Error("Failed to delete assertion");
+        }
+
+      } catch (error) {
+          console.error("Error deleting assertion:", error);
+          alert("Failed to delete assertion");
+      }
+  }
+};
+
+
+const handleUpdateAssertion = async (id) =>{
+  if (!newAssertion.assertionType || !newAssertion.condition || !newAssertion.expectedValue) {
+    alert("Please fill in all required fields.");
+    return;
+  }
+  console.log("Updating assertion with UUID:", newAssertion.id); 
+  try {
+    const response = await axios.put(`http://localhost:3000/${newAssertion.id}`,{
+      assertionType: newAssertion.assertionType,
+      condition: newAssertion.condition,
+      expectedValue: newAssertion.expectedValue,
+    }, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
     });
-    setShowForm(false);
-  };
 
-  const handleDeleteAssertion = (index) => {
-    if (window.confirm("Are you sure you want to delete this assertion?")) {
-      const updatedAssertions = assertions.filter((_, i) => i !== index);
+    if (response.status === 200) {
+      const updatedAssertions = assertions.map((assertion) =>
+        assertion.id === newAssertion.id ? response.data.assertion : assertion
+      );
       setAssertions(updatedAssertions);
+      alert("Assertion updated successfully!");
+      setShowForm(false);
+      setEditingIndex(null);
+      setNewAssertion({
+        testCaseId: '',
+        assertionType: '',
+        condition: '',
+        expectedValue: '',
+        receivedValue: '-',
+      });
+    } else {
+      throw new Error("Failed to update assertion.");
     }
-  };
+  } catch (error) {
+    console.error("Error updating assertion:", error);
+    alert("Error updating assertion.");
+  }
+}
 
-  const handleEditAssertion = (index) => {
-    const assertionToEdit = assertions[index];
+const handleEditAssertion = async (index) => {
+  
+  const assertionToEdit = assertions[index];
+  setNewAssertion({
+    testCaseId: assertionToEdit.testCaseId, // Ensure testCaseId is set
+    assertionType: assertionToEdit.assertionType,
+    condition: assertionToEdit.condition,
+    expectedValue: assertionToEdit.expectedValue,
+    receivedValue: assertionToEdit.receivedValue || '-',
+  });
     setNewAssertion(assertionToEdit);
     setEditingIndex(index);
     setShowForm(true);
-  };
+};
+
 
   const handleCancelEdit = () => {
     setNewAssertion({ 
+      
       testCase: '', 
       assertionType: '', 
       condition: '', 
@@ -123,17 +254,22 @@ const Assertion = () => {
                 <div className="assertion-form">
                   <div className="form-group">
                     <label htmlFor="testCase">Test Case</label>
-                    <select 
-                      id="testCase" 
-                      name="testCase" 
-                      value={newAssertion.testCase} 
-                      onChange={handleInputChange}
-                    >
-                      <option value="">Select Test Case</option>
-                      <option value="User Login">User Login</option>
-                      <option value="User Profile">User Profile</option>
-                      <option value="Data Fetch">Data Fetch</option>
-                      <option value="Checkout Process">Checkout Process</option>
+                    <select
+                      value={newAssertion.testCaseId || ""}
+                      onChange={(e) => {
+                      setNewAssertion((prev) => {
+                        const updated = { ...prev, testCaseId: e.target.value };
+                        return updated;
+                    });
+                  }}
+                >    
+                      {testCases.length > 0 ? (
+                        testCases.map((testCase) => (
+                        <option key={testCase.id} value={testCase.id}> {testCase.name} </option>
+                       ))
+                        ) : (
+                            <option disabled>No testcases</option>
+                          )}
                     </select>
                   </div>
 
@@ -187,7 +323,7 @@ const Assertion = () => {
                   <button className="secondary-button" onClick={handleCancelEdit}>
                     Cancel
                   </button>
-                  <button className="primary-button" onClick={handleCreateAssertion}>
+                  <button className="primary-button" onClick={editingIndex !== null ? handleUpdateAssertion : handleCreateAssertion}>
                     {editingIndex !== null ? 'Update' : 'Create'}
                   </button>
                 </div>
@@ -216,7 +352,7 @@ const Assertion = () => {
                       
                       return (
                         <tr key={index}>
-                          <td>{assertion.testCase}</td>
+                          <td>{assertion.testCase.name}</td>
                           <td>
                             <span className="assertion-badge">{assertion.assertionType}</span>
                           </td>
@@ -238,7 +374,7 @@ const Assertion = () => {
                             </button>
                             <button 
                               className="delete-button" 
-                              onClick={() => handleDeleteAssertion(index)}
+                              onClick={() => handleDeleteAssertion(assertion.id)}
                               title="Delete"
                             >
                               <i className="fa fa-trash"></i>Delete
