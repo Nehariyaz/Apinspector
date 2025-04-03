@@ -1,5 +1,9 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
+const Request = require("./Request");
+const User = require("./User");
+const Report = require("./Reports");
+const Assertion = require("./Assertion");
 
 const TestCase = sequelize.define("TestCase", {
   id: { 
@@ -50,11 +54,5 @@ const TestCase = sequelize.define("TestCase", {
 });
 
 
-TestCase.associate = (models) => {
-  TestCase.belongsTo(models.User, {
-    foreignKey: "userId",
-    as: "user",
-  });
-};
 
 module.exports = TestCase;

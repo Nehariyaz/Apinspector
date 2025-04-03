@@ -1,14 +1,17 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
-
 const Request = sequelize.define("Request", {
-  id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4,primaryKey: true },
+  id: { 
+    type: DataTypes.UUID, 
+    defaultValue: DataTypes.UUIDV4, 
+    primaryKey: true
+  },
   method: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  name:{
+  name: {
     type: DataTypes.STRING,
     allowNull: true,
   },
@@ -33,21 +36,17 @@ const Request = sequelize.define("Request", {
     defaultValue: "pending",
   },
   userId: {
-    type: DataTypes.UUID, 
+    type: DataTypes.UUID,
     allowNull: false,
     references: {
-      model: "Users", 
+      model: "Users",
       key: "id",
     },
   },
+  
 });
 
 
-Request.associate = (models) => {
-  Request.belongsTo(models.User, {
-    foreignKey: "userId",
-    as: "user",
-  });
-};
+
 
 module.exports = Request;

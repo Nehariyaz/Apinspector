@@ -16,6 +16,7 @@ const createRequest = async (req, res) => {
       headers: JSON.stringify(headers),
       body: JSON.stringify(body),
       userId,
+      
       status: "pending",
     });
 

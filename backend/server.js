@@ -5,12 +5,29 @@ const session = require("express-session");
 const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
 const requestRoutes = require("./routes/requestRoutes");
+const testCaseRoute = require("./routes/testCaseRoute");
+const assertionRoutes = require("./routes/assertionRoutes");
+const reportRoute = require("./routes/reportRoutes");
 const { sequelize, User, Request } = require("./models");
-//const sequelize = require("./config/database");
-const SequelizeStore = require("connect-session-sequelize")(session.Store);
+const SequelizeStore = require("connect-session-sequelize")(session.Store)
+require("dotenv").config({ path: "./.env" });;
 
 
 dotenv.config();
+const DB_HOST = process.env.DB_HOST || 'localhost';
+
+// If running inside Docker, use `postgres_db`
+const isDocker = process.env.DOCKER_ENV === 'true';
+const databaseHost = isDocker ? 'postgres_db' : DB_HOST;
+
+console.log(`Connecting to database at: ${databaseHost}`);
+
+if (process.env.NODE_ENV !== 'test') {
+  sequelize.authenticate()
+    .then(() => console.log(`Connecting to database at: ${sequelize.config.host}`))
+    .catch(err => console.error('Database connection failed:', err));
+}
+
 
 const app = express();
 
@@ -36,12 +53,17 @@ app.use(session({
 
 // API Routes
 app.use("/", authRoutes);
-app.use("/api", requestRoutes);
+app.use("/", requestRoutes);
+app.use("/test-cases", testCaseRoute);
+app.use("/",assertionRoutes);
+app.use("/",reportRoute);
 
 app.use((err, req, res, next) => {
   console.error("Internal Server Error:", err);
   res.status(500).json({ error: "Internal Server Error", details: err.message });
 });
+
+
 
 // Database Connection
 async function startServer() {
