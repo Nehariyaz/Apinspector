@@ -64,7 +64,7 @@ run_tests_backend:
     - cd backend
     - npm install -g sequelize-cli
     - npx sequelize-cli db:migrate
-    - npx jest --runInBand --detectOpenHandles --coverage
+    - npx jest --runInBand --detectOpenHandles --coverage --forceExit
   artifacts:
     when: always
     reports:
