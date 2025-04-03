@@ -1,16 +1,12 @@
+const { app, initialize } = require('../server');
 const { sequelize } = require('../models');
 
-module.exports = {
-  initializeDB: async () => {
-    try {
-      await sequelize.authenticate();
-      await sequelize.sync({ force: true });
-    } catch (error) {
-      console.error('Test DB setup failed:', error);
-      throw error;
-    }
-  },
-  cleanupDB: async () => {
-    await sequelize.close();
-  }
+module.exports = async () => {
+  // Configure test database connection
+  await sequelize.authenticate();
+  
+  // Force sync only the tables we need for tests
+  await sequelize.sync({ force: true });
+  
+  return app;
 };

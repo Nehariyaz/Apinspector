@@ -5,27 +5,13 @@ const session = require("express-session");
 const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
 const requestRoutes = require("./routes/requestRoutes");
-const testCaseRoute = require("./routes/testCaseRoute");
 const { sequelize, User, Request } = require("./models");
 //const sequelize = require("./config/database");
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
 
-require("dotenv").config({ path: "./.env" });
 
 dotenv.config();
-const DB_HOST = process.env.DB_HOST || 'localhost';
 
-// If running inside Docker, use `postgres_db`
-const isDocker = process.env.DOCKER_ENV === 'true';
-const databaseHost = isDocker ? 'postgres_db' : DB_HOST;
-
-console.log(`Connecting to database at: ${databaseHost}`);
-
-if (process.env.NODE_ENV !== 'test') {
-  sequelize.authenticate()
-    .then(() => console.log(`Connecting to database at: ${sequelize.config.host}`))
-    .catch(err => console.error('Database connection failed:', err));
-}
 const app = express();
 
 // CORS Configuration
@@ -50,8 +36,7 @@ app.use(session({
 
 // API Routes
 app.use("/", authRoutes);
-app.use("/", requestRoutes);
-app.use("/test-cases", testCaseRoute);
+app.use("/api", requestRoutes);
 
 app.use((err, req, res, next) => {
   console.error("Internal Server Error:", err);
@@ -80,17 +65,27 @@ async function startServer() {
   }
 }
 
-
-// Only start server if not in test environment
-if (process.env.NODE_ENV !== 'test') {
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-}
-
-
-app.get("/health", (req, res) => {
-  res.status(200).json({ status: "OK" });
+app.get("/health", async (req, res) => {
+  try {
+    await sequelize.authenticate();
+    res.status(200).json({ 
+      status: "OK",  // Changed from "ok" to "OK"
+      database: "connected",
+      environment: process.env.NODE_ENV || 'development'
+    });
+  } catch (err) {
+    res.status(500).json({ 
+      status: "ERROR", 
+      database: "disconnected",
+      error: err.message
+    });
+  }
 });
+
+// Start server only in non-test environments
+if (process.env.NODE_ENV !== "test") {
+  startServer();
+}
 
 // Export app for testing
 module.exports = app;
