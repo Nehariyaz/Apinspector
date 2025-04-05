@@ -48,6 +48,7 @@ const SignUp = () => {
       });
 
       console.log("Server Response:", response.data);
+      localStorage.setItem("user",username);
 
       if (response.status === 201) {
         alert("Registration successful! Redirecting...");
