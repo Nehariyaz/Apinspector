@@ -78,8 +78,16 @@ run_tests_backend:
 run_tests_frontend:
   stage: test
   script:
+    - apt-get update
+    - apt-get install -y wget unzip gnupg
+    - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    - apt install -y ./google-chrome-stable_current_amd64.deb
+    - rm google-chrome-stable_current_amd64.deb
     - cd frontend
-    - npm test || echo "Frontend tests not configured, skipping..."
+    - npm install
+    - cd ../tests/e2e
+    - node homepage.test.js
+    - node request.test.js
   dependencies:
     - install_dependencies_frontend
   only:

@@ -1,11 +1,6 @@
 const jwt = require("jsonwebtoken");
 
 const authMiddleware = (req, res, next) => {
-
-  if (!req.user) {
-    return res.status(403).json({ message: "Forbidden" });
-  }
-  next();
   
   const authHeader = req.headers.authorization;
   //console.log("token: ",authHeader);

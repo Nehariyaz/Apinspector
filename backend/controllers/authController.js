@@ -30,45 +30,42 @@ const verifyCaptcha = async (captchaToken) => {
 // User Registration
 exports.register = async (req, res) => {
     try {
-      const { username, email, password, captchaToken } = req.body;
-      console.log("Received request body:", req.body);
-  
-      if (!username || !email || !password) {
-        return res.status(400).json({ message: "Username, email, and password are required." });
-      }
-  
-      if (!req.body || Object.keys(req.body).length === 0) {
-        return res.status(400).json({ message: "Request body is missing or empty" });
-      }
-  
-      if (!captchaToken || !(await verifyCaptcha(captchaToken))) {
-        return res.status(403).json({ message: "reCAPTCHA failed, please try again" });
-      }
-  
-      const userExist = await User.findOne({ where: { email } });
-  
-      if (userExist) {
-        return res.status(409).json({ message: "User already exists" });
-      }
-  
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const user = await User.create({ username, email, password: hashedPassword });
-  
-      try {
-        await sendEmail(email, "Welcome!", "Thank you for registering with us.");
-      } catch (emailError) {
-        console.error("Email Sending Error:", emailError);
-        return res.status(500).json({ message: "User registered, but email failed to send" });
-      }
-  
-      return res.status(201).json({ message: "User registered successfully" });
-  
+        
+        const { username, email, password, captchaToken } = req.body;
+        
+        if (!req.body || Object.keys(req.body).length === 0) {
+            return res.status(400).json({ message: "Request body is missing or empty" });
+        }
+
+        if (!captchaToken || !(await verifyCaptcha(captchaToken))) {
+            return res.status(403).json({ message: "reCAPTCHA failed, please try again" });
+        }
+
+        const userExist = await User.findOne({ where: { email } });
+        
+        if (userExist) {
+            return res.status(409).json({ message: "User already exists" });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const user = await User.create({ username, email, password: hashedPassword });
+        //console.log("User body:",user.username,user.email);
+        try {
+            await sendEmail(email, "Welcome!", "Thank you for registering with us.");
+        } catch (emailError) {
+            console.error("Email Sending Error:", emailError);
+            return res.status(500).json({ message: "User registered, but email failed to send" });
+        }
+
+       
+        return res.status(201).json({ message: "User registered successfully" });
+        
     } catch (err) {
-      console.error("Registration Error:", err);
-      return res.status(500).json({ message: "Error registering user", err });
+        console.error("Registration Error:", err);
+        return res.status(500).json({ message: "Error registering user", err }); // Added return
     }
-  };
-  
+};
+
 
 // User Login
 exports.login = async (req, res) => {
