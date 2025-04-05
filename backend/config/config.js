@@ -1,10 +1,27 @@
-require("dotenv").config();
-console.log("Loaded DB config:");
-console.log("DB_NAME:", process.env.DB_NAME);
-console.log("DB_USER:", process.env.DB_USER);
-console.log("DB_PASS:", process.env.DB_PASS);
-console.log("RUNNING_IN_DOCKER:", process.env.RUNNING_IN_DOCKER);
+const fs = require("fs");
+const path = require("path");
+const dotenv = require("dotenv");
 
+// Load the correct env file depending on NODE_ENV and RUNNING_IN_DOCKER
+const envFiles = [
+  ".env", // default fallback
+];
+
+// Add environment-specific files
+if (process.env.NODE_ENV === "test") {
+  envFiles.unshift(".env.test");
+} else if (process.env.RUNNING_IN_DOCKER === "true") {
+  envFiles.unshift(".env.docker");
+}
+
+// Load each env file in order (earlier ones take precedence)
+envFiles.forEach((file) => {
+  const filePath = path.resolve(__dirname, "..", file);
+  if (fs.existsSync(filePath)) {
+    dotenv.config({ path: filePath });
+    console.log(`Loaded environment variables from ${file}`);
+  }
+});
 
 const isDocker = process.env.RUNNING_IN_DOCKER === "true";
 
