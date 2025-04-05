@@ -85,8 +85,10 @@ run_tests_frontend:
     - rm google-chrome-stable_current_amd64.deb
     - cd frontend
     - npm install
+    - npm run dev &          # Start frontend in background
+    - sleep 10  
     - node tests/e2e/homepage.test.js
-    - node tests/e2e/request.test.js
+    - node tests/e2e/report.test.js
   dependencies:
     - install_dependencies_frontend
   only:
