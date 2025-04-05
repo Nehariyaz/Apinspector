@@ -85,11 +85,11 @@ run_tests_frontend:
     - rm google-chrome-stable_current_amd64.deb
     - cd frontend
     - npm install
-    - cd ../tests/e2e
-    - node homepage.test.js
-    - node request.test.js
+    - node tests/e2e/homepage.test.js
+    - node tests/e2e/request.test.js
   dependencies:
     - install_dependencies_frontend
   only:
     - main
+
 
