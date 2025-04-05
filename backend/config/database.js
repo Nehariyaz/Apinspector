@@ -1,24 +1,41 @@
-require("dotenv").config({ path: process.env.NODE_ENV === "test" ? ".env.test" : ".env" });
 const { Sequelize } = require("sequelize");
+const path = require("path");
+
+const envFile = process.env.NODE_ENV === "test"
+  ? ".env.test"
+  : process.env.NODE_ENV === "docker"
+    ? ".env.docker"
+    : ".env";
+
+    const envPath = path.resolve(
+      __dirname,
+      process.env.NODE_ENV === "docker" ? "./" : "..",
+      envFile
+    );
+    
+    require("dotenv").config({ path: envPath });
+// Debug logging for connection info
+console.log("Loaded env from:", path.resolve(__dirname, "..", envFile));
+console.log("DB_NAME:", process.env.DB_NAME);
+console.log("DB_USER:", process.env.DB_USER);
+console.log("DB_HOST:", process.env.DB_HOST);
 
 const sequelize = new Sequelize(
-    process.env.DB_NAME,
-    process.env.DB_USER,
-    process.env.DB_PASSWORD,
-    {
-        host: process.env.DB_HOST,
-        port: process.env.DB_PORT || 5432,  // Default PostgreSQL port
-        dialect: process.env.DB_DIALECT || "postgres",
-        logging: false,
-        pool: {
-            max: 10,       // Max connections in the pool
-            min: 2,        // Min connections
-            acquire: 30000, // Max time (ms) to acquire a connection
-            idle: 10000,    // Time (ms) before releasing an idle connection
-        },
-    }
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASS,
+  {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT || 5432,
+    dialect: process.env.DB_DIALECT || "postgres",
+    logging: false,
+    pool: {
+      max: 10,
+      min: 2,
+      acquire: 30000,
+      idle: 10000,
+    },
+  }
 );
-
-
 
 module.exports = sequelize;

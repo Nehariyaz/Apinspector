@@ -19,7 +19,7 @@ const Request = () => {
   const [requestName, setRequestName] = useState(""); 
   
   
-  // Data for tables - now always visible
+
   const [queryParams, setQueryParams] = useState([
     { key: '', value: '', description: '' }
   ]);
@@ -27,7 +27,7 @@ const Request = () => {
     { key: '', value: '', description: '' }
   ]);
   
-  // State for selected option type in each section
+
   const [paramOption, setParamOption] = useState("custom");
   const [headerOption, setHeaderOption] = useState("custom");
   
@@ -47,7 +47,6 @@ const Request = () => {
     ]
   };
   
-  // Predefined options for headers
   const headerOptions = {
     custom: [{ key: '', value: '', description: '' }],
     option1: [

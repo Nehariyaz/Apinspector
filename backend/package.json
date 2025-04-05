@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "NODE_ENV=test jest --forceExit --detectOpenHandles --setupFiles dotenv/config",
-  "test:watch": "NODE_ENV=test jest --watch --forceExit --detectOpenHandles --setupFiles dotenv/config",
+    "test:watch": "NODE_ENV=test jest --watch --forceExit --detectOpenHandles --setupFiles dotenv/config",
     "migrate": "npx knex migrate:latest --env test",
     "rollback": "npx knex migrate:rollback --env test",
     "start": "node server.js",

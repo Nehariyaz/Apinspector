@@ -1,4 +1,4 @@
-
+version: '3.8'
 
 services:
   backend:
@@ -8,14 +8,20 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=production
-       - DB_HOST=postgres_db
-      - DOCKER_ENV=true
-    volumes:
-      - ./backend/.env:/app/.env
+      - NODE_ENV=docker
+    env_file:
+      - ./backend/.env.docker
+    # REMOVE this volume unless your app is explicitly loading /app/.env with dotenv
+    # Mounting this file can override env_file or conflict
+    # volumes:
+    #   - ./backend/.env.docker:/app/.env
     depends_on:
-      - postgres
-      - rabbitmq
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+    networks:
+      - app-network
 
   frontend:
     build:
@@ -25,6 +31,8 @@ services:
       - "5173:5173"
     depends_on:
       - backend
+    networks:
+      - app-network
 
   postgres:
     image: postgres:latest
@@ -38,6 +46,13 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "user"]
+      interval: 5s
+      retries: 5
+      timeout: 3s
+    networks:
+      - app-network
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -49,6 +64,11 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    networks:
+      - app-network
 
 volumes:
   postgres_data:
+
+networks:
+  app-network:

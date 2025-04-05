@@ -18,7 +18,6 @@ afterAll(async () => {
     await sequelize.close();
     console.log("Database connection closed.");
 
-    // Remove process event listeners to prevent memory leaks
     process.removeAllListeners("uncaughtException");
     process.removeAllListeners("unhandledRejection");
   } catch (error) {
