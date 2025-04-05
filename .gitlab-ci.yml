@@ -18,7 +18,6 @@ variables:
 stages:
   - install
   - test
-  - deploy
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
@@ -86,9 +85,3 @@ run_tests_frontend:
   only:
     - main
 
-deploy:
-  stage: deploy
-  script:
-    - echo "Deploying application..."
-  only:
-    - main
