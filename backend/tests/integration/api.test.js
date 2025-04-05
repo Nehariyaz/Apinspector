@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../server'); // Make sure this exports the app (without starting the server)
+const app = require('../../server'); // Make sure this exports the app (without starting the server)
 
 test('GET /health should return 200 status', async () => {
   const response = await request(app).get('/health');
