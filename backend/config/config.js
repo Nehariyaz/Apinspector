@@ -42,9 +42,9 @@ module.exports = {
     logging: process.env.NODE_ENV === "development" ? console.log : false
   },
   test: {
-    username: process.env.DB_TEST_USER || "your_test_user",
-    password: process.env.DB_TEST_PASS || "your_test_password",
-    database: process.env.DB_TEST_NAME || "your_app_test",
+    username: process.env.DB_USER || "your_test_user",
+    password: process.env.DB_PASS || "your_test_password",
+    database: process.env.DB_NAME || "your_app_test",
     host: isDocker ? "postgres_db" : process.env.DB_HOST || "localhost",
     port: process.env.DB_PORT || 5432,
     dialect: "postgres",
