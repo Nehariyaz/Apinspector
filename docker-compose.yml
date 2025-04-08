@@ -11,10 +11,6 @@ services:
       - NODE_ENV=docker
     env_file:
       - ./backend/.env.docker
-    # REMOVE this volume unless your app is explicitly loading /app/.env with dotenv
-    # Mounting this file can override env_file or conflict
-    # volumes:
-    #   - ./backend/.env.docker:/app/.env
     depends_on:
       postgres:
         condition: service_healthy
@@ -41,13 +37,13 @@ services:
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: mydatabase
+      POSTGRES_DB: user
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "user"]
+      test: ["CMD-SHELL", "pg_isready -U user -h localhost"]
       interval: 5s
       retries: 5
       timeout: 3s

@@ -20,6 +20,7 @@ const SequelizeStore = require("connect-session-sequelize")(session.Store);
 
 const DB_HOST = process.env.DB_HOST || "localhost";
 
+
 const isDocker = process.env.DOCKER_ENV === "true";
 const databaseHost = isDocker ? "postgres_db" : DB_HOST;
 
@@ -89,12 +90,16 @@ async function startServer() {
     // Start server only if NOT in test environment
     if (process.env.NODE_ENV !== "test") {
       const PORT = process.env.PORT || 3000;
-      app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+      const HOST = '0.0.0.0';
+      app.listen(PORT, HOST, () =>
+        console.log(`Server running on http://${HOST}:${PORT}`)
+      );
     }
   } catch (err) {
     console.error("Database connection failed:", err);
   }
 }
+
 
 app.get("/health", async (req, res) => {
   try {

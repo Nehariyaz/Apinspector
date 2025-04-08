@@ -14,11 +14,6 @@ const envFile = process.env.NODE_ENV === "test"
     );
     
     require("dotenv").config({ path: envPath });
-// Debug logging for connection info
-console.log("Loaded env from:", path.resolve(__dirname, "..", envFile));
-console.log("DB_NAME:", process.env.DB_NAME);
-console.log("DB_USER:", process.env.DB_USER);
-console.log("DB_HOST:", process.env.DB_HOST);
 
 const sequelize = new Sequelize(
   process.env.DB_NAME,

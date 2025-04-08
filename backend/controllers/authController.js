@@ -6,7 +6,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("../services/emailService");
 const { User } = require("../models");
-
 const verifyCaptcha = async (captchaToken) => {
     try {
         const response = await axios.post(
@@ -20,9 +19,11 @@ const verifyCaptcha = async (captchaToken) => {
             }
         );
 
+        console.log("🔍 CAPTCHA response from Google:", response.data);
+
         return response.data.success;
     } catch (error) {
-        console.error("reCAPTCHA verification failed:", error);
+        console.error("reCAPTCHA verification failed:", error.response?.data || error.message);
         return false;
     }
 };
