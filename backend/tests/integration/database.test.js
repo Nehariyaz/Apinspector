@@ -29,7 +29,7 @@ afterAll(async () => {
 test("POST /api/register - should return 400 if fields are missing", async () => {
   const res = await request(app).post("/api/register").send({});
   expect(res.statusCode).toBe(400);
-  expect(res.body.message).toBe("Missing required fields.");
+  expect(res.body.message).toBe("Request body is missing or empty");
 });
 
 test("POST /api/register - should return 403 if CAPTCHA is invalid", async () => {

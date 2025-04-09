@@ -17,22 +17,19 @@ router.post("/resend-otp", resendOtp);
 
 router.post("/api/register", async (req, res) => {
     try {
-        console.log("Incoming request:", req.body); 
-
         const { email, password, captchaToken } = req.body;
-
-        // Check for missing fields first
+        
         if (!email || !password || !captchaToken) {
-            console.log("Missing required fields.");
-            return res.status(400).json({ message: "Missing required fields." });
+            return res.status(400).json({ message: "Request body is missing or empty" });
         }
 
-        // Proceed with the registration logic if fields are present
-        await register(req, res); // Assuming register is an async function
-
+        // Let register() handle the success/error responses
+        await register(req, res);
+        
     } catch (error) {
-        console.error("Register API Error:", error);
-        res.status(500).json({ message: "Server error during registration" });
+        if (!res.headersSent) {
+            res.status(500).json({ message: "Server error during registration" });
+        }
     }
 });
 
