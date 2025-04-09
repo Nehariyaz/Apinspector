@@ -65,10 +65,10 @@ import chrome from 'selenium-webdriver/chrome.js';
       console.log("Tests Failed:", failed);
     }
 
-    console.log("✅ Report page test completed");
+    console.log("Report page test completed");
 
   } catch (err) {
-    console.error("❌ Error:", err.message);
+    console.error("Error:", err.message);
   } finally {
     await driver.quit();
   }
