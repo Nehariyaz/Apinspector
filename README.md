@@ -5,32 +5,32 @@ A full-stack API testing tool. Send HTTP requests, group them into test cases, a
 ## Features
 
 - Create and send API requests (method, URL, headers, body) and save them
-- Organize requests into **test cases** and attach **assertions** to check responses
-- **Reports** showing which test cases passed or failed
+- Organize requests into test cases and attach assertions to check responses
+- Reports showing which test cases passed or failed
 - User accounts with email OTP verification, password reset, JWT/session auth and reCAPTCHA
-- Asynchronous request processing through a **RabbitMQ** queue and consumer
+- Asynchronous request processing through a RabbitMQ queue and consumer
 
 ## Architecture
 
 ```
 React (Vite)  --->  Express API  --->  PostgreSQL
- :5173               :3000              (Sequelize)
-                       |
-                       v
-                   RabbitMQ  --->  consumer.js  --->  target APIs
+   :5173               :3000           (Sequelize)
+                         |
+                         v
+                     RabbitMQ  --->  consumer.js  --->  target APIs
 ```
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Frontend | React, Vite, Axios |
-| Backend | Node.js, Express, Sequelize |
-| Database | PostgreSQL |
-| Queue | RabbitMQ |
-| Testing | Jest, Supertest, Selenium |
-| DevOps | Docker, Docker Compose, GitLab CI |
-| Cloud | AWS EC2, AWS RDS |
+| Layer    | Technology                          |
+|----------|-------------------------------------|
+| Frontend | React, Vite, Axios                  |
+| Backend  | Node.js, Express, Sequelize         |
+| Database | PostgreSQL                          |
+| Queue    | RabbitMQ                            |
+| Testing  | Jest, Supertest, Selenium           |
+| DevOps   | Docker, Docker Compose, GitLab CI   |
+| Cloud    | AWS EC2, AWS RDS                    |
 
 ## Getting Started
 
@@ -75,14 +75,14 @@ npm run dev          # http://localhost:5173
 
 ## API Overview
 
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/register`, `/login`, `/verify-otp` | Authentication |
-| POST | `/forgot-password`, `/reset-password/:token` | Password reset |
-| POST | `/request`, `/requestSave` | Send and save API requests |
-| GET/POST/PUT/DELETE | `/test-cases` | Manage test cases |
-| POST/PUT/DELETE | `/test-cases/:id/assertions`, `/assertions/:id` | Manage assertions |
-| GET | `/report` | Test results report |
+| Method              | Endpoint                                          | Description                    |
+|---------------------|---------------------------------------------------|--------------------------------|
+| POST                | `/register`, `/login`, `/verify-otp`              | Authentication                 |
+| POST                | `/forgot-password`, `/reset-password/:token`      | Password reset                 |
+| POST                | `/request`, `/requestSave`                        | Send and save API requests     |
+| GET/POST/PUT/DELETE | `/test-cases`                                     | Manage test cases              |
+| POST/PUT/DELETE     | `/test-cases/:id/assertions`, `/assertions/:id`   | Manage assertions              |
+| GET                 | `/report`                                         | Test results report            |
 
 ## Testing
 
@@ -94,7 +94,7 @@ The GitLab CI pipeline runs backend tests against a Postgres service and fronten
 
 ## Deployment
 
-The app is containerized with Docker and was deployed on **AWS EC2** with **AWS RDS (PostgreSQL)** in us-east-1. Screenshots and recordings are in the `proofs/` folder.
+The app is containerized with Docker and was deployed on AWS EC2 with AWS RDS (PostgreSQL) in `us-east-1`. Screenshots and recordings are in the `proofs/` folder.
 
 ## Author
 
