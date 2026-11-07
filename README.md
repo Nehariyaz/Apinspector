@@ -95,7 +95,3 @@ The GitLab CI pipeline runs backend tests against a Postgres service and fronten
 ## Deployment
 
 The app is containerized with Docker and was deployed on AWS EC2 with AWS RDS (PostgreSQL) in `us-east-1`. Screenshots and recordings are in the `proofs/` folder.
-
-## Author
-
-Neha Amina Riyaz
